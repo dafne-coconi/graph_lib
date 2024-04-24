@@ -7,28 +7,38 @@ class Nodo:
    Clase Nodo
    :param value: number of nodes
    """
-   def __init__(self):
-      self.name = str
-      self.node_list = list()
-
-   def get_name(self, name):
+   def __init__(self, name):
       self.name = f'N{name}'
-      return self.name
+      #self.node_list = list()
+      self.nodos_adyacentes = list()
+      self.nodo_explored = 0
+
+   #def get_name(self, name):
+      #self.name = f'N{name}'
+      #return self.name
       
-   def get_node_list(self, m = 1, n = 1):
-      list_of_lists = [[0 for i in range(1, n + 1)] for _ in range(m)]
-      #print(list_of_lists)
-      
-      num_nodos = 0
-      for i in range(m):
-         for j in range(n):
-            #print(list_of_lists[i][j])
-            num_nodos += 1
-            node = self.get_name(f'{num_nodos}')
-            list_of_lists[i][j] = node
+   def get_node_list(self, m = 1, n = 1, simple = 0):
+
+      if simple == 0:
+         list_of_lists = [[0 for i in range(1, n + 1)] for _ in range(m)]
+         num_nodos = 0
+         for i in range(m):
+            for j in range(n):
+               #print(list_of_lists[i][j])
+               num_nodos += 1
+               node = self.get_name(f'{num_nodos}')
+               list_of_lists[i][j] = node
+               #print(list_of_lists)
+      elif simple == 1:
+         list_of_lists = [0] * n
+         for i in range(n):
+            node = self.get_name(f'{i+1}')
+            list_of_lists[i] = node
             #print(list_of_lists)
-       
+      #print(list_of_lists)
+ 
       self.node_list = list_of_lists
+
       return self.node_list
    
    def nodo_list_geo(self, n = 1):
@@ -42,8 +52,25 @@ class Nodo:
 
       #self.node_list = 
       return list_of_lists
-         
+   
+   def add_nodos_adyacentes(self, nodo):
+      self.nodos_adyacentes.append(nodo)
+   
+   def explored(self):
+      self.nodo_explored = 1
 
+   def not_explored(self):
+      self.nodo_explored = 0
+      
+   def __repr__(self):
+      return f'{self.name}'
+   """
+   def __cmp__(self, other):
+      return self.name == other.name
+   
+   def __eq__(self, other):
+      return self.name == other.name
+   """
    #def add_edges(self, edge):
     #  self.edges_to_node.append(edge)
 
@@ -53,11 +80,12 @@ class Arista_undirected:
    Clase Arista
    :param value: number of nodes
    """
-   def __init__(self, n1, n2, weight = 1):
+   def __init__(self, n1: Nodo, n2: Nodo, weight = 1):
       self.n1 = n1
       self.n2 = n2
       self.lista_arista = list()
       self.weight = weight
+      self.is_explored = 0
         
    def get_n1(self):
       return self.n1
@@ -67,13 +95,26 @@ class Arista_undirected:
    
    def create_list_arista(self):
       self.lista_arista = [self.n1, self.n2, self.weight]
+      self.n1.add_nodos_adyacentes(self.n2)
+      self.n2.add_nodos_adyacentes(self.n1)
       return self.lista_arista
    
-   def __str__(self):
-      return self.n1.get_name() + " -> " + self.n2.get_name()
+   def explored(self):
+      self.is_explored = 1
+   
+   def __repr__(self):
+        return f'[{self.n1}, {self.n2}, {self.weight}]'
+        #return [{self.n1}, {self.n2}, {self.weight}]
+   
+   #def __str__(self):
+        #return f'[{self.n1}, {self.n2}, {self.weight}]'
+        #return f'[{self.n1}, {self.n2}, {self.weight}]'
    
    def __cmp__(self, other):
-      return (self.lista_arista[0] == other.lista_arista[0] and self.lista_arista[1] == other.lista_arista[1]) or (self.lista_arista[0] == other.lista_arista[1] and self.lista_arista[1] == other.lista_arista[0])
+      return (self.n1.name == other.n1.name and self.n2.name == other.n2.name) or (self.n1.name == other.n2.name and self.n2.name == other.n1.name)
+
+   def __eq__(self, other):
+      return (self.n1.name == other.n1.name and self.n2.name == other.n2.name) or (self.n1.name == other.n2.name and self.n2.name == other.n1.name)
 
    
 class Arista_directed:
@@ -101,30 +142,37 @@ class Grafo:
    Clase Grafo
    """
    def __init__(self, name, nodes_list, directed):
-        self.name = name
-        self.nodes_list = nodes_list
-        self.directed = directed
-        self.edges_list = []
-        self.graph_dict = dict()
+      self.name = name
+      self.nodes_list = nodes_list
+      self.directed = directed
+      self.edges_list = []
+      self.graph_dict = dict()
+      self.capas = dict()
+      self.bfs_dict = dict()
+      self.dfs_i_dict = dict()
+      self.dfs_r_dict = dict()
+      #for node in self.nodes_list:
+       #  self.dfs_r_dict[node] = []
     
-   def new_edge(self, n1, n2, weight = 1):
-       self.n1 = n1
-       self.n2 = n2
-       """
-       Insert an edge to the list of edges in the graph
-       :param n1: starting node of the edge
-       :param n2: ending node of the edge
-       """
-       if self.directed:
-           edge = Arista_directed(n1, n2, weight)
-       else:
-           edge = Arista_undirected(n1, n2, weight)
-       
-       new_arista = edge.create_list_arista()
-       if edge not in self.edges_list: 
-         self.edges_list.append(edge.create_list_arista())
-       #print(self.edges_list)
-       #print(self.nodes_list)
+   def new_edge(self, n1: Nodo, n2: Nodo, weight = 1):
+      self.n1 = n1
+      self.n2 = n2
+      """
+      Insert an edge to the list of edges in the graph
+      :param n1: starting node of the edge
+      :param n2: ending node of the edge
+      """
+      if self.directed:
+         edge = Arista_directed(n1, n2, weight)
+      else:
+         edge = Arista_undirected(n1, n2, weight)
+      
+      #print(edge)
+      if edge not in self.edges_list: 
+         self.edges_list.append(edge)
+         edge.create_list_arista()
+      #print(self.edges_list)
+      #print(self.edges_list)
 
    def simplify_list_node(self):
       new_node_list = list()
@@ -164,30 +212,46 @@ class Grafo:
             new_list_node.append(node[0])
          self.nodes_list = new_list_node
          """
-         
+      #print(f'Node in node list {type(self.nodes_list[0])}')
       for node in self.nodes_list:
          self.graph_dict[node] = []
 
-      #print(self.graph_dict)
-      #print(self.edges_list)
-      for edge in self.edges_list:
+      changing_edges_list = self.edges_list
+      for node in self.nodes_list:
          list_value = list()
-         #print(f'edge {edge}')
-         for node in self.nodes_list:
-            if (node in [edge[0]]) and (edge[1] not in self.graph_dict[node]):
-               list_value = self.graph_dict[node]
-               list_value.append(edge[1])
-               #self.graph_dict[node]
-               #self.graph_dict.setdefault(node, []).append(edge[1])
-            #print(list_value)
+         #print(node.name)
+         for edge in changing_edges_list: 
+            #if (node.name == str(edge).split(",",2)[0].split("[")[1]):
+            if (node == edge.n1):
+               #print("true dat")
+               #list_value.append(str(edge).split(",",2)[1].strip())
+               list_value.append(edge.n2)
+               #changing_edges_list.remove(edge)
+            
          self.graph_dict[node] = list_value
       #print(f'Nodes {self.nodes_list}')
       #print(f'Edges {self.edges_list}')
       #print(f'Graph {self.graph_dict}')
 
-   def save_graph(self):
+   def save_graph(self, type_graph: str ):
       current_datetime = datetime.now().strftime("%Y%m%d%H%M%S")
-      filename = f"{self.name}_{len(self.nodes_list)}_{current_datetime}.dot"    
+      if type_graph == "BFS":
+         graph = self.bfs_dict
+         #print(f'Imprimir {graph}')
+         filename = f"{self.name}_BFS_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "DFS_R":
+         graph = self.dfs_r_dict
+         #print(f'Imprimir {graph}')
+         filename = f"{self.name}_DFS_R_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "DFS_I":
+         graph = self.dfs_i_dict
+         #print(f'Imprimir {graph}')
+         filename = f"{self.name}_DFS_I_{len(self.nodes_list)}_{current_datetime}.dot"
+      else:
+         graph = self.graph_dict
+         filename = f"{self.name}_{len(self.nodes_list)}_{current_datetime}.dot"
+      
+          
       filepath = f"archivos/{filename}"
 
       list_v = []
@@ -195,8 +259,8 @@ class Grafo:
          file.write(f"graph {self.name}" + "{\n")
          count = 0
          line = str
-         for key in self.graph_dict:
-            value = self.graph_dict[key]
+         for key in graph:
+            value = graph[key]
             if (len(value) > 0):
         
                for single_value in value:
@@ -214,4 +278,109 @@ class Grafo:
             
          file.write("\n}")
 
+      #print(self.edges_list)
       print(f"Graph saved to {filepath} ")
+
+   def not_explored_nodes(self):
+      for node in self.nodes_list:
+         node.not_explored()
+
+   def BFS(self, nodo_inicial: Nodo):
+      discovered_nodes = list()
+      discovered_nodes.append(nodo_inicial)
+      nodo_inicial.explored()
+      self.capas[1] = [nodo_inicial]
+      num_capa = 1
+      if (nodo_inicial not in self.nodes_list):
+         return
+      
+      for node in self.nodes_list:
+         self.bfs_dict[node] = []
+
+      #print(f'Nodo incial {nodo_inicial} with id {id(nodo_inicial)}')
+      while len(self.capas[num_capa]) > 0:
+         num_capa += 1
+         self.capas[num_capa] = list()
+         list_nodos_adyacentes = list()
+         #print(f'capa {num_capa-1}')
+
+         for nodo in self.capas[num_capa-1]:
+            #print(f'Nodos ad {nodo.nodos_adyacentes}')
+            list_nodo_dict = list()
+
+            for nodo_adyacente in nodo.nodos_adyacentes:
+               #print(f'Nodo ad {nodo_adyacente} with id {id(nodo_adyacente)}')
+               #print(f'Nodo ad Type {type(nodo_adyacente)}')
+
+               if nodo_adyacente.nodo_explored == 0:
+                  list_nodos_adyacentes.append(nodo_adyacente)
+                  list_nodo_dict.append(nodo_adyacente)
+                  nodo_adyacente.explored()
+               discovered_nodes.append(nodo_adyacente)
+               #print(f' Discovered {discovered_nodes}')
+            #print(f'for nodo {nodo} add {list_nodo_dict}')
+            self.bfs_dict[nodo] = list_nodo_dict
+         self.capas[num_capa] = list_nodos_adyacentes
+
+
+   def DFS_I(self, s: Nodo):
+      nodo_1 = s
+      if len(s.nodos_adyacentes) < 1:
+         raise Exception("Choose a different node with ")
+      else:
+         nodo_2 = s.nodos_adyacentes[0]
+      nodos_explorados = [nodo_1]
+      nodos_lista_cambiante = [nodo_1]
+
+      for node in self.nodes_list:
+         self.dfs_i_dict[node] = []
+
+      #num = 0
+      while len(nodos_lista_cambiante) > 0:# and num < 10:
+         new_edge = Arista_undirected(nodo_1, nodo_2, weight = 1)
+
+         if (new_edge in self.edges_list) and nodo_2.nodo_explored == 0:
+            #print("existe en las edges")
+            nodo_2.explored()
+            nodos_explorados.append(nodo_2)
+            nodos_lista_cambiante.append(nodo_2)
+            self.dfs_i_dict[nodo_1].append(nodo_2)
+
+         if len(nodo_2.nodos_adyacentes) == 0:
+            nodos_lista_cambiante.pop()
+         
+         nodo_aceptado = 0
+         while (len(nodos_lista_cambiante) > 0 and nodo_aceptado == 0):# and num < 10):
+            #num += 1
+            for nodo_ad in nodos_lista_cambiante[-1].nodos_adyacentes:
+               if nodo_ad not in nodos_explorados:
+                  nodo_1 = nodos_lista_cambiante[-1]
+                  nodo_2 = nodo_ad
+                  nodo_aceptado = 1
+                  #print(f'N1 {nodo_1} y N2 {nodo_2}')
+                  break
+            
+            if nodo_aceptado == 0:
+               nodos_lista_cambiante.pop()
+               #print(f'Ahora la lista es {len(nodos_lista_cambiante)}')
+
+      return True
+               
+
+
+   def DFS_R(self, nodo_1: Nodo):
+      #print(f'Es el nodo: {s}')
+      for nodo in nodo_1.nodos_adyacentes:
+        # print(f'La arista {arista}')
+         if nodo.nodo_explored == 0:
+
+            if nodo_1 in self.dfs_r_dict:
+               self.dfs_r_dict[nodo_1].append(nodo)
+            else:
+               self.dfs_r_dict[nodo_1] = [nodo]
+         
+            nodo_1.explored()
+            nodo.explored()
+            #print(f'arista is explored {arista.is_explored}')
+            self.DFS_R(nodo)
+         
