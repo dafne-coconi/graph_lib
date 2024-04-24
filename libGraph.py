@@ -1,6 +1,29 @@
 from utils import Nodo, Arista_undirected, Grafo
 import random
 
+def get_node_list(m = 1, n = 1, simple = 0):
+
+      if simple == 0:
+         list_of_lists = [[0 for i in range(1, n + 1)] for _ in range(m)]
+         #print(list_of_lists)
+         num_nodos = 0
+         for i in range(m):
+            for j in range(n):
+               #print(list_of_lists[i][j])
+               num_nodos += 1
+               node = Nodo(f'{num_nodos}')
+               list_of_lists[i][j] = node
+               #print(list_of_lists)
+      elif simple == 1:
+         list_of_lists = [0] * n
+         for i in range(n):
+            node = Nodo(f'{i+1}')
+            list_of_lists[i] = node
+            #print(list_of_lists)
+      #print(list_of_lists)
+
+      return list_of_lists
+
 def mesh_graph(m, n, dirigido = False):
    """
    Genera grafo de malla
@@ -9,9 +32,9 @@ def mesh_graph(m, n, dirigido = False):
    :param dirigido: el grafo es dirigido?
    :return: grafo generado
    """
-   nodo = Nodo()
-   list_nodos = nodo.get_node_list(m, n)
-   print(f'nodos {list_nodos}')
+
+   list_nodos = get_node_list(m, n, simple = 0)
+   #print(f'nodos {list_nodos}')
 
    grafo = Grafo("mesh", list_nodos, directed = dirigido)
    for i in range(m):
@@ -24,8 +47,24 @@ def mesh_graph(m, n, dirigido = False):
    grafo.simplify_list_node()
 
    grafo.create_graph_notation()
+   
+   grafo.not_explored_nodes()
+   grafo.save_graph(type_graph = grafo.name)
+   
+   nodo = grafo.nodes_list[5]
 
-   grafo.save_graph()
+   grafo.not_explored_nodes()
+   grafo.BFS(nodo)
+   grafo.save_graph(type_graph = "BFS")
+
+   grafo.not_explored_nodes()
+
+   grafo.DFS_I(nodo)
+   grafo.save_graph(type_graph = "DFS_I")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_R(nodo)
+   grafo.save_graph(type_graph = "DFS_R")
 
 def erdos_renyi_graph(n, m, dirigido = False):
    """
@@ -38,20 +77,39 @@ def erdos_renyi_graph(n, m, dirigido = False):
    if m < n - 1:
       return "m debe ser mayor a n"
    
-   nodo = Nodo()
-   list_nodos = nodo.get_node_list(n = n)
+   #nodo = Nodo()
+   list_nodos = get_node_list(n = n, simple = 1)
+   #list_nodos = nodo.get_node_list(n = n, simple = 1)
 
    grafo = Grafo("erdos_renyi", list_nodos, directed = dirigido)
-   grafo.simplify_list_node()
+   #grafo.simplify_list_node()
    
    for _ in range(m):
-      rand_sample_list = random.sample(grafo.nodes_list, 2)
+      #rand_sample_list = random.sample(grafo.nodes_list, 2)
+      rand_sample_list = random.sample(list_nodos, 2)
 
       if (rand_sample_list[0] != rand_sample_list[1]):
          grafo.new_edge(rand_sample_list[0], rand_sample_list[1])
-
+   
    grafo.create_graph_notation()
-   grafo.save_graph()
+   
+   grafo.not_explored_nodes()
+   grafo.save_graph(type_graph = grafo.name)
+   
+   nodo = grafo.nodes_list[5]
+
+   grafo.not_explored_nodes()
+   grafo.BFS(nodo)
+   grafo.save_graph(type_graph = "BFS")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_I(nodo)
+   grafo.save_graph(type_graph = "DFS_I")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_R(nodo)
+   grafo.save_graph(type_graph = "DFS_R")
+
 
 def gilbert_graph(n, p, dirigido=False):
    """
@@ -61,11 +119,12 @@ def gilbert_graph(n, p, dirigido=False):
    :param dirigido: el grafo es dirigido?
    :return: grafo generado
    """
-   nodo = Nodo()
-   list_nodos = nodo.get_node_list(n = n)
+   #nodo = Nodo()
+   list_nodos = get_node_list(n = n, simple = 1)
+   #list_nodos = nodo.get_node_list(n = n, simple = 1)
 
    grafo = Grafo("gilbert", list_nodos, directed = dirigido)
-   grafo.simplify_list_node()
+   #grafo.simplify_list_node()
 
    for i in grafo.nodes_list:
       for j in grafo.nodes_list:
@@ -73,7 +132,23 @@ def gilbert_graph(n, p, dirigido=False):
             grafo.new_edge(i, j)
    
    grafo.create_graph_notation()
-   grafo.save_graph()
+   
+   grafo.not_explored_nodes()
+   grafo.save_graph(type_graph = grafo.name)
+   
+   nodo = grafo.nodes_list[5]
+
+   grafo.not_explored_nodes()
+   grafo.BFS(nodo)
+   grafo.save_graph(type_graph = "BFS")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_I(nodo)
+   grafo.save_graph(type_graph = "DFS_I")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_R(nodo)
+   grafo.save_graph(type_graph = "DFS_R")
 
 def geografico_simple_graph(n, r, dirigido = False):
    """
@@ -83,24 +158,53 @@ def geografico_simple_graph(n, r, dirigido = False):
    :param dirigido: el grafo es dirigido?
    :return: grafo generado
    """
-   nodo = Nodo()
-   list_nodos = nodo.nodo_list_geo(n = n)
+
+   list_nodos = [0] * n
+   list_nodos_distancia = [[0 for i in range(1, 4)] for _ in range(n)]
+      #print(list_of_lists)
+   for i in range(n):
+      node = Nodo(f'{i+1}')
+      list_nodos_distancia[i][0] = node
+      list_nodos_distancia[i][1] = random.random()
+      list_nodos_distancia[i][2] = random.random()
+      list_nodos[i] = node
+
+   #nodo = Nodo()
+   #print(list_nodos_distancia)
+   #list_nodos = nodo.nodo_list_geo(n = n)
    
    grafo = Grafo("geografico_simple", list_nodos, directed = dirigido)
 
-   for nodo_1 in grafo.nodes_list:
-      for nodo_2 in grafo.nodes_list:
+   for nodo_1 in list_nodos_distancia:
+      for nodo_2 in list_nodos_distancia:
          #print(f'nodo 1 {nodo_1} nodo 2 {nodo_2}')
          if nodo_1 != nodo_2:
             distance = grafo.distance_nodes(nodo_1, nodo_2)
+            #print(f'nodo 1 {nodo_1} nodo 2 {nodo_2}')
             #print(f'distance: {distance}')
             if distance < r:
                grafo.new_edge(nodo_1[0], nodo_2[0])
    
-   grafo.nodes_list = nodo.get_node_list(n = n)
-   grafo.simplify_list_node()
+   #grafo.nodes_list = get_node_list(n = n, simple = 1)
+   #list_nodos = get_node_list(n = n, simple = 1)
+   #grafo.simplify_list_node()
    grafo.create_graph_notation()
-   grafo.save_graph()
+   grafo.not_explored_nodes()
+   grafo.save_graph(type_graph = grafo.name)
+   
+   nodo = grafo.nodes_list[0]
+
+   grafo.not_explored_nodes()
+   grafo.BFS(nodo)
+   grafo.save_graph(type_graph = "BFS")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_I(nodo)
+   grafo.save_graph(type_graph = "DFS_I")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_R(nodo)
+   grafo.save_graph(type_graph = "DFS_R")
 
 
 
@@ -112,21 +216,40 @@ def barabasi_albert_graph(n, degree, dirigido = False):
    :param dirigido: el grafo es dirigido?
    :return: grafo generado
    """
-   nodo = Nodo()
-   list_nodos = nodo.get_node_list(n = n)
+
+   #nodo = Nodo()
+   list_nodos = get_node_list(n = n, simple = 1)
    
    grafo = Grafo("barabasi_albert", list_nodos, directed = dirigido)
-   grafo.simplify_list_node()
+   #grafo.simplify_list_node()
 
    for nodo_1 in grafo.nodes_list:
         for nodo_2 in grafo.nodes_list:
-           connect = 1 - (len(grafo.node_in_out(nodo_2)) / degree)
+           #print(f'{nodo_2.name}')
+           #print(f'nodos ad {len(nodo_1.nodos_adyacentes)}')
+           connect = 1 - (len(nodo_1.nodos_adyacentes) / degree)
            #print(f'connect {connect}')
-           if random.random() < connect:
+           if (random.random() < connect) and nodo_1 != nodo_2:
+              #print("Se conecta!")
               grafo.new_edge(nodo_1, nodo_2)
 
    grafo.create_graph_notation()
-   grafo.save_graph()
+   grafo.not_explored_nodes()
+   grafo.save_graph(type_graph = grafo.name)
+   
+   nodo = grafo.nodes_list[0]
+
+   grafo.not_explored_nodes()
+   grafo.BFS(nodo)
+   grafo.save_graph(type_graph = "BFS")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_I(nodo)
+   grafo.save_graph(type_graph = "DFS_I")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_R(nodo)
+   grafo.save_graph(type_graph = "DFS_R")
 
 def dorogovtsev_mendes_graph(n, dirigido = False):
    """
@@ -138,11 +261,12 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    if n < 3:
       return "La cantidad de nodos debe ser > 3"
    
-   nodo = Nodo()
-   list_nodos = nodo.get_node_list(n = n)
+   #nodo = Nodo()
+   list_nodos = get_node_list(n = n, simple = 1)
+   #list_nodos = nodo.get_node_list(n = n, simple = 1)
 
    grafo = Grafo("dorogovtsev_mendes", list_nodos, directed = dirigido)
-   grafo.simplify_list_node()
+   #grafo.simplify_list_node()
    
    sample_list = grafo.nodes_list[0:3]
    new_list_nodes = grafo.nodes_list[3:]
@@ -152,8 +276,23 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    #print("fin de primera cración")
    for node in new_list_nodes:
       edge = random.choice(grafo.edges_list)
-      grafo.new_edge(edge[0], node)
-      grafo.new_edge(edge[1], node)
+      grafo.new_edge(edge.n1, node)
+      grafo.new_edge(edge.n2, node)
    
    grafo.create_graph_notation()
-   grafo.save_graph()
+   grafo.not_explored_nodes()
+   grafo.save_graph(type_graph = grafo.name)
+   
+   nodo = grafo.nodes_list[0]
+
+   grafo.not_explored_nodes()
+   grafo.BFS(nodo)
+   grafo.save_graph(type_graph = "BFS")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_I(nodo)
+   grafo.save_graph(type_graph = "DFS_I")
+
+   grafo.not_explored_nodes()
+   grafo.DFS_R(nodo)
+   grafo.save_graph(type_graph = "DFS_R")
