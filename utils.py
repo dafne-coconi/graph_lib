@@ -94,7 +94,9 @@ class Arista_undirected:
       return self.n2
    
    def create_list_arista(self):
-      self.lista_arista = [self.n1, self.n2, self.weight]
+      self.weight = random.randint(0,50)
+      #self.lista_arista = [self.n1, self.n2, self.weight]
+      self.lista_arista = [self.n1, self.n2]
       self.n1.add_nodos_adyacentes(self.n2)
       self.n2.add_nodos_adyacentes(self.n1)
       return self.lista_arista
@@ -103,8 +105,9 @@ class Arista_undirected:
       self.is_explored = 1
    
    def __repr__(self):
-        return f'[{self.n1}, {self.n2}, {self.weight}]'
-        #return [{self.n1}, {self.n2}, {self.weight}]
+        #return f'[{self.n1}, {self.n2}, {self.weight}]'
+        return f'[{self.n1}, {self.n2}]'
+        
    
    #def __str__(self):
         #return f'[{self.n1}, {self.n2}, {self.weight}]'
@@ -172,7 +175,7 @@ class Grafo:
          self.edges_list.append(edge)
          edge.create_list_arista()
       #print(self.edges_list)
-      #print(self.edges_list)
+      print(self.edges_list)
 
    def simplify_list_node(self):
       new_node_list = list()
@@ -387,6 +390,7 @@ class Grafo:
       """
       list_Q = [nodo_inicial]
       list_S = []
+      dict_distance_node = {}
       for node in self.nodes_list:
          if node != nodo_inicial:
             list_Q.append(node)
@@ -397,5 +401,5 @@ class Grafo:
 
           for nodo_adyacente in list_S[-1].nodos_adyacentes:
              if nodo_adyacente not in list_S:
-                #if d(u)
-                print(node)
+                print("hola")
+                #if edge fue explorado
