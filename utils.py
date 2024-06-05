@@ -322,7 +322,6 @@ class Grafo:
             self.bfs_dict[nodo] = list_nodo_dict
          self.capas[num_capa] = list_nodos_adyacentes
 
-
    def DFS_I(self, s: Nodo):
       nodo_1 = s
       if len(s.nodos_adyacentes) < 1:
@@ -365,8 +364,6 @@ class Grafo:
                #print(f'Ahora la lista es {len(nodos_lista_cambiante)}')
 
       return True
-               
-
 
    def DFS_R(self, nodo_1: Nodo):
       #print(f'Es el nodo: {s}')
@@ -383,4 +380,22 @@ class Grafo:
             nodo.explored()
             #print(f'arista is explored {arista.is_explored}')
             self.DFS_R(nodo)
-         
+   
+   def Dijkstra(self, nodo_inicial: Nodo):
+      """
+      Algoritmo de camino mínimo
+      """
+      list_Q = [nodo_inicial]
+      list_S = []
+      for node in self.nodes_list:
+         if node != nodo_inicial:
+            list_Q.append(node)
+
+      while len(list_Q) > 0:
+          list_S.append(list_Q[0])
+          list_Q.pop(0)
+
+          for nodo_adyacente in list_S[-1].nodos_adyacentes:
+             if nodo_adyacente not in list_S:
+                #if d(u)
+                print(node)
