@@ -154,6 +154,7 @@ class Grafo:
       self.bfs_dict = dict()
       self.dfs_i_dict = dict()
       self.dfs_r_dict = dict()
+      self.dijkstra_dict = dict()
       #for node in self.nodes_list:
        #  self.dfs_r_dict[node] = []
     
@@ -250,9 +251,13 @@ class Grafo:
          graph = self.dfs_i_dict
          #print(f'Imprimir {graph}')
          filename = f"{self.name}_DFS_I_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "DIJKSTRA":
+         graph = self.dijkstra_dict
+         filename = f"{self.name}_DIJKSTRA_{len(self.nodes_list)}_{current_datetime}.dot"
       else:
          graph = self.graph_dict
          filename = f"{self.name}_{len(self.nodes_list)}_{current_datetime}.dot"
+   
       
           
       filepath = f"archivos/{filename}"
@@ -394,7 +399,9 @@ class Grafo:
       dict_distance_node = {}
       list_S = []
       dict_distance_node[nodo_inicial] = 0
+
       for node in self.nodes_list:
+         self.dijkstra_dict[node] = []
          if node != nodo_inicial:
             list_Q.append(node)
             dict_distance_node[node] = 10000
@@ -464,7 +471,9 @@ class Grafo:
                   list_Q.pop(list_Q.index(nodo_adyacente))   # Remove from the list
                   list_Q.insert(mid, nodo_adyacente)         # Insert in new position
                   print(f' New list Q: {list_Q}')
-      print(dict_distance_node)
+                  self.dijkstra_dict[nodo_u] = nodo_adyacente 
+      print(f'distancia de nodos {dict_distance_node}')
+      print('Grafo formado: self.dijkstra_dict')
       
                         
                            
