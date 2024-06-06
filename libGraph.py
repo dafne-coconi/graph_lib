@@ -95,7 +95,7 @@ def erdos_renyi_graph(n, m, dirigido = False):
    
    grafo.not_explored_nodes()
    grafo.save_graph(type_graph = grafo.name)
-   """
+   
    nodo = grafo.nodes_list[5]
    
    grafo.not_explored_nodes()
@@ -109,7 +109,7 @@ def erdos_renyi_graph(n, m, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
-   """
+   
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
@@ -154,6 +154,7 @@ def gilbert_graph(n, p, dirigido=False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
+
 
 def geografico_simple_graph(n, r, dirigido = False):
    """
@@ -212,7 +213,6 @@ def geografico_simple_graph(n, r, dirigido = False):
    grafo.save_graph(type_graph = "DFS_R")
 
 
-
 def barabasi_albert_graph(n, degree, dirigido = False):
    """
    Genera grafo aleatorio con el modelo Barabasi-Albert
@@ -255,6 +255,7 @@ def barabasi_albert_graph(n, degree, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
+
 
 def dorogovtsev_mendes_graph(n, dirigido = False):
    """
