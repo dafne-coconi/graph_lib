@@ -95,9 +95,9 @@ def erdos_renyi_graph(n, m, dirigido = False):
    
    grafo.not_explored_nodes()
    grafo.save_graph(type_graph = grafo.name)
-   
-   nodo = grafo.nodes_list[5]
    """
+   nodo = grafo.nodes_list[5]
+   
    grafo.not_explored_nodes()
    grafo.BFS(nodo)
    grafo.save_graph(type_graph = "BFS")
@@ -113,6 +113,7 @@ def erdos_renyi_graph(n, m, dirigido = False):
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
+   grafo.save_graph(type_graph = "DIJKSTRA")
 
 
 def gilbert_graph(n, p, dirigido=False):
