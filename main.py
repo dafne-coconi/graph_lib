@@ -4,7 +4,7 @@ from libGraph import mesh_graph, erdos_renyi_graph, gilbert_graph, geografico_si
 #mesh_graph(10,10, False)
 #mesh_graph(10,50, False)
 
-erdos_renyi_graph(10, 12, False)
+erdos_renyi_graph(8, 12, False)
 #erdos_renyi_graph(100, 120, False)
 #erdos_renyi_graph(500, 520, False)
 

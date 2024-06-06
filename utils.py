@@ -94,7 +94,7 @@ class Arista_undirected:
       return self.n2
    
    def create_list_arista(self):
-      self.weight = random.randint(0,50)
+      self.weight = random.randint(2,50)
       #self.lista_arista = [self.n1, self.n2, self.weight]
       self.lista_arista = [self.n1, self.n2]
       self.n1.add_nodos_adyacentes(self.n2)
@@ -388,18 +388,84 @@ class Grafo:
       """
       Algoritmo de camino mínimo
       """
+      if len(nodo_inicial.nodos_adyacentes) < 1:
+         print(f'No tiene nodos adyacentes, intenta con otro')
       list_Q = [nodo_inicial]
-      list_S = []
       dict_distance_node = {}
+      list_S = []
+      dict_distance_node[nodo_inicial] = 0
       for node in self.nodes_list:
          if node != nodo_inicial:
             list_Q.append(node)
+            dict_distance_node[node] = 10000
 
+      print(f'lista Q {list_Q}')
       while len(list_Q) > 0:
-          list_S.append(list_Q[0])
-          list_Q.pop(0)
+         list_S.append(list_Q[0])
+         print(f'lista S {list_S}')
+         list_Q.pop(0)
+         nodo_u = list_S[-1]
 
-          for nodo_adyacente in list_S[-1].nodos_adyacentes:
-             if nodo_adyacente not in list_S:
-                print("hola")
-                #if edge fue explorado
+         for nodo_adyacente in nodo_u.nodos_adyacentes:
+            if nodo_adyacente not in list_S:
+               print(f'Nodo adyacente {nodo_adyacente}')
+               arista_adyacente =  Arista_undirected(nodo_u, nodo_adyacente)
+               print(f'le arista adyacente {arista_adyacente}')
+               print(f'dict {dict_distance_node}')
+               index_list_edges = self.edges_list.index(arista_adyacente)
+               l_e = self.edges_list[index_list_edges].weight
+               print(f'le real arista {self.edges_list[index_list_edges]} con peso {l_e}')
+               if dict_distance_node[nodo_adyacente] > dict_distance_node[nodo_u] + l_e: # or dict_distance_node[nodo_adyacente] == "INF":      
+                  new_distance_value = dict_distance_node[nodo_u] + l_e
+                   
+                  print(f'New distancia a {nodo_adyacente} es {new_distance_value}')
+                  low = 0
+                  high = len(list_Q) - 1
+                  mid = 0
+                  value_found = 0
+                  while low <= high and value_found == 0:
+                     mid = (high + low) // 2
+                     nodo_mid = list_Q[mid]
+                     
+                     searched_value = new_distance_value
+                     compared_value = dict_distance_node[nodo_mid]
+                     
+                     if compared_value < searched_value:
+                        print(f'Valor de nodo {nodo_mid} es menor a {searched_value}')
+                        low = mid + 1
+                        print(f'new value of low {low}')
+                         
+                        if low < len(list_Q) - 1:
+                           nodo_next_mid = list_Q[mid + 1]
+                           print(f'distancia del siguiente nodo es {dict_distance_node[nodo_next_mid]}')
+                           if dict_distance_node[nodo_next_mid] > searched_value:
+                               
+                              value_found = 1
+                              mid = mid + 1
+                        
+                     
+                     elif compared_value > searched_value:
+                        print(f'Valor de nodo {nodo_mid} es mayor a {searched_value}')
+                        high = mid - 1
+                        print(f'new value of high {high}')
+                         
+                        if high > 0:
+                           nodo_prev_mid = list_Q[mid - 1]
+                           print(f'distancia del nodo anterior es {dict_distance_node[nodo_prev_mid]}')
+                           if dict_distance_node[nodo_prev_mid] < searched_value:
+                              value_found = 1
+                              mid = mid - 1
+                       
+  
+                     else:
+                        value_found = 1
+                  dict_distance_node[nodo_adyacente] = new_distance_value
+                  print(f'Posicion a insertar {mid}')
+                  list_Q.pop(list_Q.index(nodo_adyacente))   # Remove from the list
+                  list_Q.insert(mid, nodo_adyacente)         # Insert in new position
+                  print(f' New list Q: {list_Q}')
+      print(dict_distance_node)
+      
+                        
+                           
+                      
