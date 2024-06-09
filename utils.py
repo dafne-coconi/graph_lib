@@ -177,7 +177,6 @@ class Grafo:
          self.edges_list.append(edge)
          edge.create_list_arista()
       #print(self.edges_list)
-      print(self.edges_list)
 
    def simplify_list_node(self):
       new_node_list = list()
@@ -257,7 +256,7 @@ class Grafo:
          filename = f"{self.name}_DIJKSTRA_{len(self.nodes_list)}_{current_datetime}.dot"
       else:
          graph = self.graph_dict
-         print(f'grafo regular {self.graph_dict}')
+         #print(f'grafo regular {self.graph_dict}')
          filename = f"{self.name}_{len(self.nodes_list)}_{current_datetime}.dot"
    
       
@@ -279,14 +278,17 @@ class Grafo:
                   #print(single_value)
                   #line = f'{key} ->' + '{' + f'{value_as_string}' + '}\n'
                   if type_graph == "DIJKSTRA":
-                     line = f'{key}_{self.dict_distance_node[key]} -> ' + f'{single_value}_{self.dict_distance_node[single_value]}' + ';\n'
+                     line = f'{single_value}_{self.dict_distance_node[single_value]} -> ' + f'{key}_{self.dict_distance_node[key]}' + ';\n'
                      file.write(line)
                   else:
                      line = f'{key} -> ' + f'{single_value}' + ';\n'
                      file.write(line)
 
             else:
-               line = f'{key}'+ '\n'
+               if type_graph == "DIJKSTRA":
+                  line = f'{key}_0'+ '\n'
+               else:
+                  line = f'{key}'+ '\n'
                file.write(line)
             
             
@@ -294,6 +296,47 @@ class Grafo:
 
       #print(self.edges_list)
       print(f"Graph saved to {filepath} ")
+
+   def save_graph_edges(self, type_graph: str ):
+      current_datetime = datetime.now().strftime("%Y%m%d%H%M%S")
+      if type_graph == "BFS":
+         graph = self.bfs_dict
+         #print(f'Imprimir {graph}')
+         filename = f"{self.name}_BFS_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "DFS_R":
+         graph = self.dfs_r_dict
+         #print(f'Imprimir {graph}')
+         filename = f"{self.name}_DFS_R_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "DFS_I":
+         graph = self.dfs_i_dict
+         #print(f'Imprimir {graph}')
+         filename = f"{self.name}_DFS_I_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "DIJKSTRA":
+         graph = self.dijkstra_dict
+         filename = f"{self.name}_DIJKSTRA_{len(self.nodes_list)}_{current_datetime}.dot"
+      else:
+         graph = self.graph_dict
+         #print(f'grafo regular {self.graph_dict}')
+         filename = f"{self.name}_edges_{len(self.nodes_list)}_{current_datetime}.dot"
+   
+      
+          
+      filepath = f"archivos/{filename}"
+
+      list_v = []
+      with open(filepath, "w", encoding="UTF") as file:
+         file.write(f"graph {self.name}" + "{\n")
+         count = 0
+         line = str
+         for edge in self.edges_list:
+            
+            line = f'{edge.n1} -> ' + f'{edge.n2}[Label={edge.weight}]' + ';\n'
+            file.write(line)
+            
+         file.write("\n}")
+
+      #print(self.edges_list)
+      print(f"Graph saved to {filepath}")
 
    def not_explored_nodes(self):
       for node in self.nodes_list:
@@ -401,6 +444,7 @@ class Grafo:
       """
       if len(nodo_inicial.nodos_adyacentes) < 1:
          print(f'No tiene nodos adyacentes, intenta con otro')
+         return
       list_Q = [nodo_inicial]
       
       list_S = []
@@ -412,26 +456,26 @@ class Grafo:
             list_Q.append(node)
             self.dict_distance_node[node] = 10000
 
-      print(f'lista Q {list_Q}')
+      #print(f'lista Q {list_Q}')
       while len(list_Q) > 0:
          list_S.append(list_Q[0])
-         print(f'lista S {list_S}')
+         #print(f'lista S {list_S}')
          list_Q.pop(0)
          nodo_u = list_S[-1]
 
          for nodo_adyacente in nodo_u.nodos_adyacentes:
             if nodo_adyacente not in list_S:
-               print(f'Nodo adyacente {nodo_adyacente}')
+               #print(f'Nodo adyacente {nodo_adyacente}')
                arista_adyacente =  Arista_undirected(nodo_u, nodo_adyacente)
-               print(f'le arista adyacente {arista_adyacente}')
-               print(f'dict {self.dict_distance_node}')
+               #print(f'le arista adyacente {arista_adyacente}')
+               #print(f'dict {self.dict_distance_node}')
                index_list_edges = self.edges_list.index(arista_adyacente)
                l_e = self.edges_list[index_list_edges].weight
-               print(f'le real arista {self.edges_list[index_list_edges]} con peso {l_e}')
+               #print(f'le real arista {self.edges_list[index_list_edges]} con peso {l_e}')
                if self.dict_distance_node[nodo_adyacente] > self.dict_distance_node[nodo_u] + l_e: # or dict_distance_node[nodo_adyacente] == "INF":      
                   new_distance_value = self.dict_distance_node[nodo_u] + l_e
                    
-                  print(f'New distancia a {nodo_adyacente} es {new_distance_value}')
+                  #print(f'New distancia a {nodo_adyacente} es {new_distance_value}')
                   low = 0
                   high = len(list_Q) - 1
                   mid = 0
@@ -444,13 +488,13 @@ class Grafo:
                      compared_value = self.dict_distance_node[nodo_mid]
                      
                      if compared_value < searched_value:
-                        print(f'Valor de nodo {nodo_mid} es menor a {searched_value}')
+                        #print(f'Valor de nodo {nodo_mid} es menor a {searched_value}')
                         low = mid + 1
-                        print(f'new value of low {low}')
+                        #print(f'new value of low {low}')
                          
                         if low < len(list_Q) - 1:
                            nodo_next_mid = list_Q[mid + 1]
-                           print(f'distancia del siguiente nodo es {self.dict_distance_node[nodo_next_mid]}')
+                           #print(f'distancia del siguiente nodo es {self.dict_distance_node[nodo_next_mid]}')
                            if self.dict_distance_node[nodo_next_mid] > searched_value:
                                
                               value_found = 1
@@ -458,13 +502,13 @@ class Grafo:
                         
                      
                      elif compared_value > searched_value:
-                        print(f'Valor de nodo {nodo_mid} es mayor a {searched_value}')
+                        #print(f'Valor de nodo {nodo_mid} es mayor a {searched_value}')
                         high = mid - 1
-                        print(f'new value of high {high}')
+                        #print(f'new value of high {high}')
                          
                         if high > 0:
                            nodo_prev_mid = list_Q[mid - 1]
-                           print(f'distancia del nodo anterior es {self.dict_distance_node[nodo_prev_mid]}')
+                           #print(f'distancia del nodo anterior es {self.dict_distance_node[nodo_prev_mid]}')
                            if self.dict_distance_node[nodo_prev_mid] < searched_value:
                               value_found = 1
                               mid = mid - 1
@@ -473,14 +517,14 @@ class Grafo:
                      else:
                         value_found = 1
                   self.dict_distance_node[nodo_adyacente] = new_distance_value
-                  print(f'Posicion a insertar {mid}')
+                  #print(f'Posicion a insertar {mid}')
                   list_Q.pop(list_Q.index(nodo_adyacente))   # Remove from the list
                   list_Q.insert(mid, nodo_adyacente)         # Insert in new position
-                  print(f' New list Q: {list_Q}')
+                  #print(f' New list Q: {list_Q}')
                   self.dijkstra_dict[nodo_adyacente] = [nodo_u] 
-                  print(f'{nodo_u} a nodo ad {nodo_adyacente}')
-      print(f'distancia de nodos {self.dict_distance_node}')
-      print(f'Grafo formado: {self.dijkstra_dict}')
+                  #print(f'{nodo_u} a nodo ad {nodo_adyacente}')
+      #print(f'distancia de nodos {self.dict_distance_node}')
+      #print(f'Grafo formado: {self.dijkstra_dict}')
       
                         
                            
