@@ -80,7 +80,7 @@ class Arista_undirected:
    Clase Arista
    :param value: number of nodes
    """
-   def __init__(self, n1: Nodo, n2: Nodo, weight = 1):
+   def __init__(self, n1: Nodo, n2: Nodo, weight = random.randint(2,50)):
       self.n1 = n1
       self.n2 = n2
       self.lista_arista = list()
@@ -94,7 +94,6 @@ class Arista_undirected:
       return self.n2
    
    def create_list_arista(self):
-      self.weight = random.randint(2,50)
       #self.lista_arista = [self.n1, self.n2, self.weight]
       self.lista_arista = [self.n1, self.n2]
       self.n1.add_nodos_adyacentes(self.n2)
@@ -159,7 +158,7 @@ class Grafo:
       #for node in self.nodes_list:
        #  self.dfs_r_dict[node] = []
     
-   def new_edge(self, n1: Nodo, n2: Nodo, weight = 1):
+   def new_edge(self, n1: Nodo, n2: Nodo, weight = random.randint(2,50)):
       self.n1 = n1
       self.n2 = n2
       """
@@ -342,6 +341,28 @@ class Grafo:
       for node in self.nodes_list:
          node.not_explored()
 
+   def sort_edges(self, vector_list: list)->list:
+      if len(vector_list) <= 1:
+         return vector_list
+      else:
+         weight_edge = vector_list[0].weight
+         left = []
+         right = []
+         for x in vector_list[1:]:
+            if x.weight < weight_edge:
+               left.append(x)
+         
+         for x in vector_list[1:]:
+            if x.weight >= weight_edge:
+               right.append(x)
+
+         return self.sort_edges(left) + [vector_list[0]] + self.sort_edges(right)
+      
+   def get_root(self, root, nodo):
+      if root[nodo] != nodo:
+         root[nodo] = self.get_root(root, root[nodo])
+      return root[nodo]
+
    def BFS(self, nodo_inicial: Nodo):
       discovered_nodes = list()
       discovered_nodes.append(nodo_inicial)
@@ -393,7 +414,7 @@ class Grafo:
 
       #num = 0
       while len(nodos_lista_cambiante) > 0:# and num < 10:
-         new_edge = Arista_undirected(nodo_1, nodo_2, weight = 1)
+         new_edge = Arista_undirected(nodo_1, nodo_2)
 
          if (new_edge in self.edges_list) and nodo_2.nodo_explored == 0:
             #print("existe en las edges")
@@ -445,16 +466,17 @@ class Grafo:
       if len(nodo_inicial.nodos_adyacentes) < 1:
          print(f'No tiene nodos adyacentes, intenta con otro')
          return
-      list_Q = [nodo_inicial]
       
-      list_S = []
-      self.dict_distance_node[nodo_inicial] = 0
+      # Set initial lists
+      list_Q = [nodo_inicial]   # Priority queue
+      list_S = []               # List of visited nodes 
+      self.dict_distance_node[nodo_inicial] = 0    # Dictionary for distance to each node
 
       for node in self.nodes_list:
          self.dijkstra_dict[node] = []
          if node != nodo_inicial:
-            list_Q.append(node)
-            self.dict_distance_node[node] = 10000
+            list_Q.append(node)                          
+            self.dict_distance_node[node] = 10000        # Create node with superior lenght
 
       #print(f'lista Q {list_Q}')
       while len(list_Q) > 0:
@@ -465,10 +487,8 @@ class Grafo:
 
          for nodo_adyacente in nodo_u.nodos_adyacentes:
             if nodo_adyacente not in list_S:
-               #print(f'Nodo adyacente {nodo_adyacente}')
+
                arista_adyacente =  Arista_undirected(nodo_u, nodo_adyacente)
-               #print(f'le arista adyacente {arista_adyacente}')
-               #print(f'dict {self.dict_distance_node}')
                index_list_edges = self.edges_list.index(arista_adyacente)
                l_e = self.edges_list[index_list_edges].weight
                #print(f'le real arista {self.edges_list[index_list_edges]} con peso {l_e}')
@@ -525,7 +545,82 @@ class Grafo:
                   #print(f'{nodo_u} a nodo ad {nodo_adyacente}')
       #print(f'distancia de nodos {self.dict_distance_node}')
       #print(f'Grafo formado: {self.dijkstra_dict}')
-      
+   
+   def KruskalD(self, grafo):
+      """
+      Algoritmo de expansión mínima
+      """
+      print(self.edges_list)
+      self.edges_list = self.sort_edges(self.edges_list)
+      T_exp_min = []
+      root = []
+      rank = []
+      total_cost = 0
+      for node in self.nodes_list:
+         root.append(node)
+         rank.append(0)
+
+      for edge in self.edges_list:
+         u = edge.n1
+         v = edge.n2
+         weight_edge = edge.weight
+
+         root_n1 = self.get_root(root, u)
+         root_n2 = self.get_root(root, v)
+
+         if root_n1 != root_n2:
+            T_exp_min.append(edge)
+            if rank[u] < rank[v]:
+               root[u] = v
+            elif rank[u] > rank[v]:
+               root[v] = u
+
+            else: 
+               root[v] = v
+               rank[u] += 1
+            total_cost += weight_edge
+
+
+      """
+      dict_conj = dict()
+      conjunto_n1 = 0
+      conjunto_n2 = 1
+      iteration = 0
+      for edge in self.edges_list:
+         iteration += 1
+         if iteration == 1:
+            dict_conj[conjunto_n1] = 
+         # checar en qué conjunto están
+         it = 0
+         for conj in dict_conj:            
+            if edge.n1 in dict_conj[conj]:
+               dict_conj[conj].append(edge.n1)
+               conjunto_n1 = conj
+               break
+            elif len(dict_conj) - 1 <= it:
+               dict_conj[conj + 1] = [edge.n1]
+               conjunto_n1 = conj+1
+            it += 1
+
+         it = 0   
+         for conj in dict_conj:
+            conjunto_n2 = conj
+            if edge.n2 in dict_conj[conj]:
+               dict_conj[conj].append(edge.n2)
+               conjunto_n2 = conj
+               break
+            elif len(dict_conj) - 1 <= it:
+               dict_conj[conj + 1] = [edge.n2]
+               conjunto_n2 = conj + 1
+            it += 1
+            
+         if conjunto_n1 != conjunto_n2:
+            dict_conj[conjunto_n1].append(edge.n2)
+            dict_conj[conjunto_n2].pop(edge.n2)
+            T_exp_min.append(edge)
+         print(f'T {T_exp_min}')
+      """
+      # Ordenar las aristas ascendentemente por su costo
                         
                            
                       
