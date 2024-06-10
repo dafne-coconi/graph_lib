@@ -556,6 +556,7 @@ class Grafo:
       root = []
       rank = []
       total_cost = 0
+      """
       for node in self.nodes_list:
          root.append(node)
          rank.append(0)
@@ -579,7 +580,7 @@ class Grafo:
                root[v] = v
                rank[u] += 1
             total_cost += weight_edge
-
+      """
 
       """
       dict_conj = dict()
