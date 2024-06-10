@@ -323,10 +323,10 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
-   """
+   
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
-
+   """
    grafo.KruskalD(grafo)

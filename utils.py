@@ -358,10 +358,24 @@ class Grafo:
 
          return self.sort_edges(left) + [vector_list[0]] + self.sort_edges(right)
       
-   def get_root(self, root, nodo):
-      if root[nodo] != nodo:
-         root[nodo] = self.get_root(root, root[nodo])
-      return root[nodo]
+   def get_root(self, root, node):
+      if root[node] != node:
+         root[node] = self.find(root, root[node])
+
+      return root[node]
+   
+   def merge_graphs(self, root, conj, u, v):
+      # Merge the bigger graph to the smaller
+      if (conj[u] < conj[u]):
+         root[u] = v
+      elif (conj[v] > conj[u]):
+         root[v] = u
+      # conj are the same, one nodes needs to be the root
+      else:
+         root[u] = v
+         conj[v] += 1
+      
+      return root, conj
 
    def BFS(self, nodo_inicial: Nodo):
       discovered_nodes = list()
@@ -552,76 +566,26 @@ class Grafo:
       """
       print(self.edges_list)
       self.edges_list = self.sort_edges(self.edges_list)
+
       T_exp_min = []
-      root = []
-      rank = []
       total_cost = 0
-      """
+      
+      root = dict()
+      conj = dict
       for node in self.nodes_list:
-         root.append(node)
-         rank.append(0)
-
+         root[node] = node
+         conj[node] = 0
+      
       for edge in self.edges_list:
-         u = edge.n1
-         v = edge.n2
-         weight_edge = edge.weight
+         root_u = self.get_root(root, edge.n1)
+         root_v = self.get_root(root, edge.n2)
 
-         root_n1 = self.get_root(root, u)
-         root_n2 = self.get_root(root, v)
-
-         if root_n1 != root_n2:
+         if root_u != root_v:
             T_exp_min.append(edge)
-            if rank[u] < rank[v]:
-               root[u] = v
-            elif rank[u] > rank[v]:
-               root[v] = u
+            self.merge_graphs(root, conj, edge.n1, edge.n2)
 
-            else: 
-               root[v] = v
-               rank[u] += 1
-            total_cost += weight_edge
-      """
+      print(f'edges exp min {T_exp_min}')
 
-      """
-      dict_conj = dict()
-      conjunto_n1 = 0
-      conjunto_n2 = 1
-      iteration = 0
-      for edge in self.edges_list:
-         iteration += 1
-         if iteration == 1:
-            dict_conj[conjunto_n1] = 
-         # checar en qué conjunto están
-         it = 0
-         for conj in dict_conj:            
-            if edge.n1 in dict_conj[conj]:
-               dict_conj[conj].append(edge.n1)
-               conjunto_n1 = conj
-               break
-            elif len(dict_conj) - 1 <= it:
-               dict_conj[conj + 1] = [edge.n1]
-               conjunto_n1 = conj+1
-            it += 1
-
-         it = 0   
-         for conj in dict_conj:
-            conjunto_n2 = conj
-            if edge.n2 in dict_conj[conj]:
-               dict_conj[conj].append(edge.n2)
-               conjunto_n2 = conj
-               break
-            elif len(dict_conj) - 1 <= it:
-               dict_conj[conj + 1] = [edge.n2]
-               conjunto_n2 = conj + 1
-            it += 1
-            
-         if conjunto_n1 != conjunto_n2:
-            dict_conj[conjunto_n1].append(edge.n2)
-            dict_conj[conjunto_n2].pop(edge.n2)
-            T_exp_min.append(edge)
-         print(f'T {T_exp_min}')
-      """
-      # Ordenar las aristas ascendentemente por su costo
                         
                            
                       

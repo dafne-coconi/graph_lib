@@ -21,5 +21,5 @@ from libGraph import mesh_graph, erdos_renyi_graph, gilbert_graph, geografico_si
 #barabasi_albert_graph(500,2, False)
 
 dorogovtsev_mendes_graph(20, False)
-dorogovtsev_mendes_graph(120, False)
+#dorogovtsev_mendes_graph(120, False)
 #dorogovtsev_mendes_graph(500, False)
