@@ -40,9 +40,9 @@ def mesh_graph(m, n, dirigido = False):
    for i in range(m):
       for j in range(n):
          if i < m - 1:
-            grafo.new_edge(list_nodos[i][j], list_nodos[i + 1][j])
+            grafo.new_edge(list_nodos[i][j], list_nodos[i + 1][j], random.randint(2,50))
          if j < n - 1:
-            grafo.new_edge(list_nodos[i][j], list_nodos[i][j + 1])
+            grafo.new_edge(list_nodos[i][j], list_nodos[i][j + 1], random.randint(2,50))
 
    grafo.simplify_list_node()
 
@@ -94,7 +94,7 @@ def erdos_renyi_graph(n, m, dirigido = False):
       rand_sample_list = random.sample(list_nodos, 2)
 
       if (rand_sample_list[0] != rand_sample_list[1]):
-         grafo.new_edge(rand_sample_list[0], rand_sample_list[1])
+         grafo.new_edge(rand_sample_list[0], rand_sample_list[1], random.randint(2,50))
    
    grafo.create_graph_notation()
    
@@ -139,7 +139,7 @@ def gilbert_graph(n, p, dirigido=False):
    for i in grafo.nodes_list:
       for j in grafo.nodes_list:
          if p < random.random() and i != j:
-            grafo.new_edge(i, j)
+            grafo.new_edge(i, j, random.randint(2,50))
    
    grafo.create_graph_notation()
    
@@ -202,7 +202,7 @@ def geografico_simple_graph(n, r, dirigido = False):
             #print(f'nodo 1 {nodo_1} nodo 2 {nodo_2}')
             #print(f'distance: {distance}')
             if distance < r:
-               grafo.new_edge(nodo_1[0], nodo_2[0])
+               grafo.new_edge(nodo_1[0], nodo_2[0], random.randint(2,50))
    
    #grafo.nodes_list = get_node_list(n = n, simple = 1)
    #list_nodos = get_node_list(n = n, simple = 1)
@@ -253,7 +253,7 @@ def barabasi_albert_graph(n, degree, dirigido = False):
            #print(f'connect {connect}')
            if (random.random() < connect) and nodo_1 != nodo_2:
               #print("Se conecta!")
-              grafo.new_edge(nodo_1, nodo_2)
+              grafo.new_edge(nodo_1, nodo_2, random.randint(2,50))
 
    grafo.create_graph_notation()
    grafo.not_explored_nodes()
@@ -299,12 +299,12 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    new_list_nodes = grafo.nodes_list[3:]
 
    for i in range(3):
-      grafo.new_edge(sample_list[i-1], sample_list[i])
+      grafo.new_edge(sample_list[i-1], sample_list[i], random.randint(2,50))
    #print("fin de primera cración")
    for node in new_list_nodes:
       edge = random.choice(grafo.edges_list)
-      grafo.new_edge(edge.n1, node)
-      grafo.new_edge(edge.n2, node)
+      grafo.new_edge(edge.n1, node, random.randint(2,50))
+      grafo.new_edge(edge.n2, node, random.randint(2,50))
    
    grafo.create_graph_notation()
    grafo.not_explored_nodes()
@@ -328,3 +328,5 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
+
+   grafo.KruskalD(grafo)
