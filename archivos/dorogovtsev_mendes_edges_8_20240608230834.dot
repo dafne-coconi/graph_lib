@@ -1,0 +1,16 @@
+graph dorogovtsev_mendes{
+N3 -> N1[Label=45];
+N1 -> N2[Label=7];
+N2 -> N3[Label=16];
+N2 -> N4[Label=30];
+N3 -> N4[Label=37];
+N3 -> N5[Label=37];
+N4 -> N5[Label=29];
+N2 -> N6[Label=46];
+N3 -> N6[Label=22];
+N3 -> N7[Label=12];
+N1 -> N7[Label=11];
+N2 -> N8[Label=23];
+N3 -> N8[Label=43];
+
+}
