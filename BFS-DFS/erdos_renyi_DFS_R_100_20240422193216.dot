@@ -1,0 +1,6 @@
+graph erdos_renyi{
+N6 -> N7;
+N7 -> N41;
+N7 -> N11;
+
+}
