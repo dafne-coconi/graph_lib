@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
 import math
+import copy
 
 class Nodo:
    """
@@ -55,6 +56,9 @@ class Nodo:
    
    def add_nodos_adyacentes(self, nodo):
       self.nodos_adyacentes.append(nodo)
+
+   def remove_nodo_adyacente(self, nodo_ad):
+      self.nodos_adyacentes.remove(nodo_ad)
    
    def explored(self):
       self.nodo_explored = 1
@@ -341,7 +345,7 @@ class Grafo:
       for node in self.nodes_list:
          node.not_explored()
 
-   def sort_edges(self, vector_list: list)->list:
+   def sort_edges(self, vector_list: list, ascendent = True)->list:
       if len(vector_list) <= 1:
          return vector_list
       else:
@@ -355,8 +359,10 @@ class Grafo:
          for x in vector_list[1:]:
             if x.weight >= weight_edge:
                right.append(x)
-
-         return self.sort_edges(left) + [vector_list[0]] + self.sort_edges(right)
+         if ascendent == True:
+            return self.sort_edges(left) + [vector_list[0]] + self.sort_edges(right)
+         elif ascendent == False:
+            return self.sort_edges(right, False) + [vector_list[0]] + self.sort_edges(left, False)
       
    def get_root(self, root, node):
       if root[node] != node:
@@ -408,11 +414,13 @@ class Grafo:
                   list_nodos_adyacentes.append(nodo_adyacente)
                   list_nodo_dict.append(nodo_adyacente)
                   nodo_adyacente.explored()
-               discovered_nodes.append(nodo_adyacente)
+                  discovered_nodes.append(nodo_adyacente)
                #print(f' Discovered {discovered_nodes}')
             #print(f'for nodo {nodo} add {list_nodo_dict}')
             self.bfs_dict[nodo] = list_nodo_dict
          self.capas[num_capa] = list_nodos_adyacentes
+      
+      return len(discovered_nodes)
 
    def DFS_I(self, s: Nodo):
       nodo_1 = s
@@ -472,6 +480,7 @@ class Grafo:
             nodo.explored()
             #print(f'arista is explored {arista.is_explored}')
             self.DFS_R(nodo)
+      
    
    def Dijkstra(self, nodo_inicial: Nodo):
       """
@@ -565,7 +574,7 @@ class Grafo:
       Algoritmo de expansión mínima
       """
       print(self.edges_list)
-      self.edges_list = self.sort_edges(self.edges_list)
+      edges_list_KruskalD = self.sort_edges(self.edges_list)
 
       T_exp_min = []
       total_cost = 0
@@ -576,7 +585,7 @@ class Grafo:
          root[node] = node
          conj[node] = 0
       
-      for edge in self.edges_list:
+      for edge in edges_list_KruskalD:
          print(f'edge {edge} and weight {edge.weight}')
          
          root_u = self.get_root(root, edge.n1)
@@ -595,6 +604,34 @@ class Grafo:
 
       print(f'edges exp min {T_exp_min}')
 
-                        
-                           
+   def KruskalI(self, grafo):
+     
+      edges_list_KrustalI = self.sort_edges(self.edges_list, False)
+      modified_edges_list_KrustalI = copy.deepcopy(edges_list_KrustalI)
+      num_nodos = len(self.nodes_list)
+      print(f'edges {edges_list_KrustalI}')
+      for edge in edges_list_KrustalI:
+         print(f'peso del edge {edge.n1}-{edge.n2} es {edge.weight}')
+         print(f'Nodos ad de {edge.n1} son {edge.n1.nodos_adyacentes}')
+         print(f'Nodos ad de {edge.n2} son {edge.n2.nodos_adyacentes}')
+         edge.n1.remove_nodo_adyacente(edge.n2)
+         edge.n2.remove_nodo_adyacente(edge.n1)
+         print(f'Ahora nodos ad de {edge.n1} son {edge.n1.nodos_adyacentes}')
+
+         self.not_explored_nodes()
+         num_disc_nodes_1 = self.BFS(edge.n1)
+
+         self.not_explored_nodes()
+         num_disc_nodes_2 = self.BFS(edge.n2)
+         
+         print(f'num nodos en n1 {num_disc_nodes_1} num nodos en n2 {num_disc_nodes_2}')
+         if num_disc_nodes_1 == num_nodos and num_disc_nodes_2 == num_nodos:
+            modified_edges_list_KrustalI.remove(edge)
+         else:
+            edge.n1.add_nodos_adyacentes(edge.n2)
+            edge.n2.add_nodos_adyacentes(edge.n1)
+
+         print(f'Krustal edges {modified_edges_list_KrustalI}')
+         print(f'Orig Krustal edges {edges_list_KrustalI}')
+
                       

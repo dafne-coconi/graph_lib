@@ -329,4 +329,5 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
    """
-   grafo.KruskalD(grafo)
+   #grafo.KruskalD(grafo)
+   grafo.KruskalI(grafo)
