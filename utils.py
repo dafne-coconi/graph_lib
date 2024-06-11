@@ -360,7 +360,7 @@ class Grafo:
       
    def get_root(self, root, node):
       if root[node] != node:
-         root[node] = self.find(root, root[node])
+         root[node] = self.get_root(root, root[node])
 
       return root[node]
    
@@ -571,18 +571,27 @@ class Grafo:
       total_cost = 0
       
       root = dict()
-      conj = dict
+      conj = dict()
       for node in self.nodes_list:
          root[node] = node
          conj[node] = 0
       
       for edge in self.edges_list:
+         print(f'edge {edge} and weight {edge.weight}')
+         
          root_u = self.get_root(root, edge.n1)
          root_v = self.get_root(root, edge.n2)
+         
+         print(f'node {edge.n1} root {root_u}')
+         print(f'node {edge.n2} root {root_v}')
 
          if root_u != root_v:
+            print("Es expansión mínima y se añade")
             T_exp_min.append(edge)
-            self.merge_graphs(root, conj, edge.n1, edge.n2)
+            root, conj = self.merge_graphs(root, conj, root_u, root_v)
+
+            print(f'new root {root}')
+            print(f'new conj {conj}')
 
       print(f'edges exp min {T_exp_min}')
 
