@@ -634,4 +634,30 @@ class Grafo:
          print(f'Krustal edges {modified_edges_list_KrustalI}')
          print(f'Orig Krustal edges {edges_list_KrustalI}')
 
+   def Prim(self, grafo, nodo_inicial): 
+      """
+      Para cálculo de árbol de expansión masiva, se escoge un nodo aleatorio 
+      """
+      dict_distancias = dict()
+      for nodo in self.nodes_list:
+         dict_distancias[nodo] = "INF"
+
+      list_Q = []
+      list_S = []
+
+      for nodo in self.nodes_list:
+         list_Q.append(nodo)
+      
+      while len(list_Q) >= 0:
+         nodo_u = list_Q[0]
+         list_S.append(nodo_u)
+
+         for nodo_ad in nodo_u.nodos_adyacentes:
+            arista_adyacente =  Arista_undirected(nodo_u, nodo_ad)
+            index_list_edges = self.edges_list.index(arista_adyacente)
+            l_e = self.edges_list[index_list_edges].weight
+
+            if ((nodo_ad not in list_S) and (l_e < dict_distancias[nodo_ad])):
+               dict_distancias[nodo_ad] = l_e
+         
                       
