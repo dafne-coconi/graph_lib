@@ -108,8 +108,14 @@ class Arista_undirected:
       self.is_explored = 1
    
    def __repr__(self):
-        #return f'[{self.n1}, {self.n2}, {self.weight}]'
         return f'[{self.n1}, {self.n2}]'
+        #return f'({self.n1}, {self.n2})
+        # 
+   def __key(self):
+      return (self.n1.name, self.n2.name)
+
+   def __hash__(self):
+      return hash(self.__key())
         
    
    #def __str__(self):
@@ -158,6 +164,7 @@ class Grafo:
       self.dfs_i_dict = dict()
       self.dfs_r_dict = dict()
       self.dijkstra_dict = dict()
+      self.prim_dict = dict()
       self.dict_distance_node = {}
       #for node in self.nodes_list:
        #  self.dfs_r_dict[node] = []
@@ -383,6 +390,48 @@ class Grafo:
       
       return root, conj
 
+   def sort_priority_queue(self, list_Q, distance_values, new_distance_value):
+      low = 0
+      high = len(list_Q) - 1
+      mid = 0
+      value_found = 0
+      while low <= high and value_found == 0:
+         mid = (high + low) // 2
+         nodo_mid = list_Q[mid]
+         
+         searched_value = new_distance_value
+         compared_value = distance_values[nodo_mid]
+         
+         # Buscar si el valor es meno es mayor a la mitad de la lista
+         if compared_value < searched_value:
+            low = mid + 1
+               
+            if low < len(list_Q) - 1:
+               nodo_next_mid = list_Q[mid + 1]
+               # buscar si su siguiente nodo en la lista tiene una longitud menor, 
+               # entonces pertenece en medio de esos valores
+               if distance_values[nodo_next_mid] > searched_value:      
+                  value_found = 1
+                  mid = mid + 1
+            
+         
+         elif compared_value > searched_value:
+            #print(f'Valor de nodo {nodo_mid} es mayor a {searched_value}')
+            high = mid - 1
+            #print(f'new value of high {high}')
+               
+            if high > 0:
+               nodo_prev_mid = list_Q[mid - 1]
+               # buscar si su anterior nodo en la lista tiene una longitud mayor, 
+               # entonces pertenece en medio de esos valores
+               if distance_values[nodo_prev_mid] < searched_value:
+                  value_found = 1
+                  mid = mid - 1
+            
+         else:
+            value_found = 1
+      return mid
+   
    def BFS(self, nodo_inicial: Nodo):
       discovered_nodes = list()
       discovered_nodes.append(nodo_inicial)
@@ -634,30 +683,67 @@ class Grafo:
          print(f'Krustal edges {modified_edges_list_KrustalI}')
          print(f'Orig Krustal edges {edges_list_KrustalI}')
 
-   def Prim(self, grafo, nodo_inicial): 
+   def Prim(self, grafo, nodo_incial): 
       """
       Para cálculo de árbol de expansión masiva, se escoge un nodo aleatorio 
       """
+      print(f'Grafo original {grafo.graph_dict}')
+      
       dict_distancias = dict()
-      for nodo in self.nodes_list:
-         dict_distancias[nodo] = "INF"
-
       list_Q = []
       list_S = []
+      list_S_nodos = [nodo_incial]
 
-      for nodo in self.nodes_list:
-         list_Q.append(nodo)
-      
-      while len(list_Q) >= 0:
-         nodo_u = list_Q[0]
-         list_S.append(nodo_u)
+      nodo_ad = nodo_incial.nodos_adyacentes[0]
+      arista_escogida =  Arista_undirected(nodo_incial, nodo_ad)
+      index_list_edges = self.edges_list.index(arista_escogida)
+      arista_escogida =  self.edges_list[index_list_edges]
+
+      for edge in self.edges_list:
+         print(f'edge add distance {edge}')
+         dict_distancias[edge] = 1000000
+         
+         list_Q.append(edge)
+         
+      print(f'Lista Q {list_Q}')
+
+      nodo_u = nodo_incial
+      while len(list_Q) > 0:
+         #nodo_u = list_S_nodos[-1]
 
          for nodo_ad in nodo_u.nodos_adyacentes:
             arista_adyacente =  Arista_undirected(nodo_u, nodo_ad)
             index_list_edges = self.edges_list.index(arista_adyacente)
             l_e = self.edges_list[index_list_edges].weight
+            arista_adyacente = self.edges_list[index_list_edges]
 
-            if ((nodo_ad not in list_S) and (l_e < dict_distancias[nodo_ad])):
-               dict_distancias[nodo_ad] = l_e
+            print(f'Arista {arista_adyacente} con peso {l_e}')
+
+            if ((arista_adyacente not in list_S) and (l_e < dict_distancias[arista_adyacente])):
+               
+               new_place_Q = self.sort_priority_queue(list_Q, dict_distancias, l_e)
+               dict_distancias[arista_adyacente] = l_e
+               list_Q.pop(list_Q.index(arista_adyacente))    # Remove from the list
+               list_Q.insert(new_place_Q, arista_adyacente)  # Actualizar lista de prioridades Q
+
+               print(f'Lista Q actualizada {list_Q}')
+               #Actualizar diccionario de árbol de Prim
+               self.prim_dict[arista_adyacente.n1] = arista_adyacente.n2
+               
+               arista_eliminar = arista_adyacente
+
+         list_Q.pop(list_Q.index(arista_eliminar))
+         list_S.append(arista_eliminar)
+
+         if arista_eliminar.n1 in list_S_nodos:
+            list_S_nodos.append(arista_eliminar.n2)
+         else:
+            list_S_nodos.append(arista_eliminar.n1)
+
+         if list_Q[0].n1 in list_S_nodos:
+            nodo_u = list_Q[0].n2
+         else:
+            nodo_u = list_Q[0].n2
+         print(f'Grafo Prim Resultante {self.prim_dict}')
          
                       
