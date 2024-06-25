@@ -168,6 +168,8 @@ class Grafo:
       self.dijkstra_dict = dict()
       self.prim_dict = dict()
       self.dict_distance_node = {}
+      self.nodos_drawed_dict = dict()
+      self.vec_fuerzas = dict()
       #for node in self.nodes_list:
        #  self.dfs_r_dict[node] = []
     
@@ -736,34 +738,34 @@ class Grafo:
                self.prim_dict[nodo_ad] = [nodo_u]
          
          self.dict_distance_node = dict_distancias
-   
-   def draw_graph_eades(self, M = 2, c1 = 2, c2 = 1, c3 = 1, c4 = 0.1):
+
+   def draw_graph_eades(self, M = 200, c1 = 0.0001, c2 = 1, k1 = 1, k2 = 1, delta = 0.02):
       def draw_node(pos_x, pos_y):
          nodo_pos = (pos_x*750, pos_y*750)
-         return pygame.draw.circle(win, (255, 255, 255), nodo_pos, 3)
+         return pygame.draw.circle(win, (0, 255, 255), nodo_pos, 7)
       
       def nodo_update(nodo):
-         x = int((nodos_drawed_dict[nodo].center[0] * 750) / 750)
-         y = int((nodos_drawed_dict[nodo].center[1] * 750) / 750)
+         x = self.nodos_drawed_dict[nodo].center[0] / 750
+         y = self.nodos_drawed_dict[nodo].center[1] / 750
          return draw_node(x,y)
 
       def draw_edge(nodo1, nodo2):
-         pos_n1 = nodos_drawed_dict[nodo1].center
-         pos_n2 = nodos_drawed_dict[nodo2].center
+         pos_n1 = self.nodos_drawed_dict[nodo1].center
+         pos_n2 = self.nodos_drawed_dict[nodo2].center
 
-         pygame.draw.line(win, (255, 0, 0), pos_n1, pos_n2, 2)
+         return pygame.draw.line(win, (255, 255, 255), pos_n1, pos_n2, 3)
 
-      #def update_edge(nodo1, nodo2):
-       #  pos_n1 = nodos_drawed_dict[nodo1].center
-        # pos_n2 = nodos_drawed_dict[nodo2].center
+      def update_edge(nodo1, nodo2):
+         pos_n1 = self.nodos_drawed_dict[nodo1].center
+         pos_n2 = self.nodos_drawed_dict[nodo2].center
          
       def distance_ang(pos_1, pos_2):
-         x_n1 = pos_1[0]
-         y_n1 = pos_1[1]
-         x_n2 = pos_2[0]
-         y_n2 = pos_2[1]
-         d = math.sqrt((x_n1 - x_n2)**2 + (y_n1 - y_n2)**2)
-         ang = math.atan2(x_n1 - x_n2, y_n1 - y_n2)
+         x_n1 = pos_1[0]/750
+         y_n1 = pos_1[1]/750
+         x_n2 = pos_2[0]/750
+         y_n2 = pos_2[1]/750
+         d = (x_n2 - x_n1)**2 + (y_n2 - y_n1)**2
+         ang = math.atan2(x_n2 - x_n1, y_n2 - y_n1)
          return d, ang
       
       def suma_vectores(f1, ang1, nodo_fuerza):
@@ -775,8 +777,27 @@ class Grafo:
          f, ang = distance_ang(p1 , (0 ,0))
          return f,ang
 
-      nodos_drawed_dict = dict()
-      vec_fuerzas = dict()
+      def fuerza_repulsion(n1, n2):
+         pos1 = self.nodos_drawed_dict[n1].center
+         pos2 = self.nodos_drawed_dict[n2].center
+         dist, angulo = distance_ang(pos1, pos2)
+         dist_1 = dist * math.sqrt(dist)
+         if dist_1 > 0:
+            const = c1 /(dist_1)
+         else:
+            const = 0
+         return [-const*(pos2[0]-pos1[0]), -const*(pos2[1]-pos1[1])]
+      
+      def fuerza_atraccion(n1, n2, dist_actual):
+         pos1 = self.nodos_drawed_dict[n1].center
+         pos2 = self.nodos_drawed_dict[n2].center
+         dx = pos2[0] - pos1[0]
+         dy = pos2[1] - pos1[1]
+
+         ds = math.sqrt(dx**2 + dy**2)
+         dl = ds/750 - dist_actual/750
+         const = k2 * dl / ds
+         return [const * dx, const * dy]
 
       pygame.init()
 
@@ -786,20 +807,88 @@ class Grafo:
 
       run = True
 
+      for nodo in self.nodes_list:
+            x = random.random()
+            y = random.random()
+            self.nodos_drawed_dict[nodo] = draw_node(x,y)
+            print(f'nodo {nodo} center {self.nodos_drawed_dict[nodo].center}')
+            self.nodos_drawed_dict[nodo] = nodo_update(nodo)
+            print(f'nodo {nodo} center {self.nodos_drawed_dict[nodo].center}')
+            
+            self.vec_fuerzas[nodo] = [0,0]
+
+      for nodo_1 in self.nodes_list:
+         for nodo_2 in self.nodes_list:
+            edge_created = Arista_undirected(nodo_1, nodo_2)
+            if (nodo_1 != nodo_2) and (edge_created in self.edges_list):
+               draw_edge(nodo_1, nodo_2)
+
       while run:
-         pygame.time.delay(100)
+         for i in range(0, M):
+            ekint = [0.0, 0.0]
+            for nodo_1 in self.nodes_list:
+               F_x = 0.0
+               F_y = 0.0
+               Fxy = [0, 0]
+               for nodo_2 in self.nodes_list:
+                  if nodo_1 != nodo_2:
+                     edge_created = Arista_undirected(nodo_1, nodo_2)
+                     
+                     if edge_created not in self.edges_list:
+                        Fxy = fuerza_repulsion(nodo_1, nodo_2)
+                     else:
+                        p1 = self.nodos_drawed_dict[nodo_1].center
+                        p2 = self.nodos_drawed_dict[nodo_2].center
+
+                        print(f'center p1 {p1}, center p2 {p2}')
+
+                        dis_a, ang = distance_ang(p1, p2)
+                        Fxy = fuerza_atraccion(nodo_1, nodo_2, math.sqrt(dis_a))
+                     
+                  F_x += Fxy[0]
+                  F_y += Fxy[1]
+               v_0 = self.vec_fuerzas[nodo_1][0]
+               v_1 = self.vec_fuerzas[nodo_1][1]
+               self.vec_fuerzas[nodo_1][0] = (v_0 + k1 * F_x * delta) * c2
+               self.vec_fuerzas[nodo_1][1] = (v_1 + k1 * F_y * delta) * c2
+
+               ekint[0] = ekint[0] + k1 * (self.vec_fuerzas[nodo_1][0] ** 2)
+               ekint[1] = ekint[1] + k1 * (self.vec_fuerzas[nodo_1][1] ** 2)
+
+               #self.nodos_drawed_dict[nodo_1][0] += self.vec_fuerzas[nodo_1][0] * delta
+               #self.nodos_drawed_dict[nodo_1][1] += self.vec_fuerzas[nodo_1][0] * delta
+               #nodo_update(nodo_1)
+            
+            win.fill((0, 0, 0))
+            
+            for i in self.nodes_list:                
+               self.nodos_drawed_dict[i][0] += self.vec_fuerzas[i][0] * delta
+               self.nodos_drawed_dict[i][1] += self.vec_fuerzas[i][0] * delta
+               self.nodos_drawed_dict[i] = nodo_update(i)
+               #pygame.display.update()
+
+            for i in self.nodes_list:
+               for j in self.nodes_list:
+                  edge_created = Arista_undirected(i, j)
+                  if edge_created in self.edges_list:
+                     draw_edge(i, j)
+
+            pygame.display.update()
+
+            pygame.time.Clock().tick(2000)
+         run = False
 
          for event in pygame.event.get():
             if event.type == pygame.QUIT:
                   run = False
+            
 
-         for nodo in self.nodes_list:
-            x = random.random()
-            y = random.random()
-            nodos_drawed_dict[nodo] = draw_node(x,y)
-            nodos_drawed_dict[nodo] = nodo_update(nodo)
-            vec_fuerzas[nodo] = (0,0)
 
+               
+
+      """
+      while run:
+         pygame.time.delay(100)
 
          for edge in self.edges_list:
             draw_edge(edge.n1, edge.n2)
@@ -813,39 +902,14 @@ class Grafo:
                   if nodo_1 != nodo_2:
                      pos1 = nodos_drawed_dict[nodo_1].center
                      pos2 = nodos_drawed_dict[nodo_2].center
-                     distance, ang = distance_ang(pos1, pos2)
-                     if edge_created in self.edges_list:
-                        fuerza = c1 * numpy.log(distance/c2) 
-                     elif distance == 0:
-                        fuerza = 0
-                     else:
-                        fuerza = c3 / math.sqrt(distance)
-                     print(f'fuerza {fuerza}')
-                     #sumamos fuerzas
-                     fue_f1, ang_f1 = suma_vectores(fuerza, ang, vec_fuerzas[nodo_1])
-                     vec_fuerzas[nodo_1] = (fue_f1, ang_f1)
-                     print(f'Fuerza y angulo ({fue_f1}, {ang_f1})')
-
-                     fue_f2, ang_f2 = suma_vectores(fuerza, ang, vec_fuerzas[nodo_2])
-                     vec_fuerzas[nodo_2] = (fue_f2, ang_f2)
-
-                     co_x_1 = c4 * vec_fuerzas[nodo_1][0] * math.cos(vec_fuerzas[nodo_1][1])
-                     co_y_1 = c4 * vec_fuerzas[nodo_1][0] * math.sin(vec_fuerzas[nodo_1][1])
-
-                     co_x_2 = c4 * vec_fuerzas[nodo_2][0] * math.cos(vec_fuerzas[nodo_2][1])
-                     co_y_2 = c4 * vec_fuerzas[nodo_2][0] * math.sin(vec_fuerzas[nodo_2][1])
-
-                     nodos_drawed_dict[nodo_1] = draw_node(pos1[0]+co_x_1, pos1[1]+co_y_1)
-                     nodos_drawed_dict[nodo_2] = draw_node(pos2[0]+co_x_2, pos2[1]+co_y_2)
-
-                     print(f'x {nodos_drawed_dict[nodo_1].center[0]}, y {nodos_drawed_dict[nodo_1].center[1]}')
+            print(f'x {nodos_drawed_dict[nodo_1].center[0]}, y {nodos_drawed_dict[nodo_1].center[1]}')
 
                      pygame.display.update()
 
          pygame.time.delay(1000)
          run = False
          #minor change
+         
 
       pygame.quit()
-
-   
+      """
