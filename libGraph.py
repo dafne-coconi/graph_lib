@@ -379,4 +379,16 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
+   
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
    """
+
+   grafo.draw_graph_eades()
