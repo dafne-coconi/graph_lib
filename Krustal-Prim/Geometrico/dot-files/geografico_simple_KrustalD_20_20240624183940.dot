@@ -1,0 +1,21 @@
+graph geografico_simple{
+N1 -> N13[Label=2];
+N1 -> N14[Label=2];
+N2 -> N14[Label=2];
+N7 -> N18[Label=5];
+N5 -> N15[Label=6];
+N4 -> N7[Label=7];
+N5 -> N10[Label=7];
+N7 -> N11[Label=7];
+N8 -> N14[Label=10];
+N4 -> N12[Label=11];
+N14 -> N17[Label=11];
+N6 -> N16[Label=14];
+N10 -> N13[Label=14];
+N8 -> N16[Label=16];
+N1 -> N19[Label=18];
+N3 -> N16[Label=23];
+N5 -> N20[Label=25];
+N9 -> N11[Label=46];
+
+}
