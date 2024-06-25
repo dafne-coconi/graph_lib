@@ -538,7 +538,183 @@ class Grafo:
                   #print(f'{nodo_u} a nodo ad {nodo_adyacente}')
       #print(f'distancia de nodos {self.dict_distance_node}')
       #print(f'Grafo formado: {self.dijkstra_dict}')
+   
+   def KruskalD(self, grafo):
+      """
+      Algoritmo de expansión mínima
+      """
+      #print(self.edges_list)
+      edges_list_KruskalD = self.sort_edges(self.edges_list)
+
+      T_exp_min = []
+      total_cost = 0
       
-                        
-                           
+      root = dict()
+      conj = dict()
+      for node in self.nodes_list:
+         root[node] = node
+         conj[node] = 0
+      
+      for edge in edges_list_KruskalD:
+         #print(f'edge {edge} and weight {edge.weight}')
+         
+         root_u = self.get_root(root, edge.n1)
+         root_v = self.get_root(root, edge.n2)
+         
+         #print(f'node {edge.n1} root {root_u}')
+         #print(f'node {edge.n2} root {root_v}')
+
+         if root_u != root_v:
+            #print("Es expansión mínima y se añade")
+            T_exp_min.append(edge)
+            root, conj = self.merge_graphs(root, conj, root_u, root_v)
+
+            #print(f'new root {root}')
+            #print(f'new conj {conj}')
+
+      #print(f'edges exp min {T_exp_min}')
+      return T_exp_min
+
+   def KruskalI(self, grafo):
+     
+      edges_list_KrustalI = self.sort_edges(self.edges_list, False)
+      modified_edges_list_KrustalI = copy.deepcopy(edges_list_KrustalI)
+      num_nodos = len(self.nodes_list)
+      #print(f'edges {edges_list_KrustalI}')
+      for edge in edges_list_KrustalI:
+         #print(f'peso del edge {edge.n1}-{edge.n2} es {edge.weight}')
+         #print(f'Nodos ad de {edge.n1} son {edge.n1.nodos_adyacentes}')
+         #print(f'Nodos ad de {edge.n2} son {edge.n2.nodos_adyacentes}')
+         edge.n1.remove_nodo_adyacente(edge.n2)
+         edge.n2.remove_nodo_adyacente(edge.n1)
+         #print(f'Ahora nodos ad de {edge.n1} son {edge.n1.nodos_adyacentes}')
+
+         self.not_explored_nodes()
+         num_disc_nodes_1 = self.BFS(edge.n1)
+
+         self.not_explored_nodes()
+         num_disc_nodes_2 = self.BFS(edge.n2)
+         
+         #print(f'num nodos en n1 {num_disc_nodes_1} num nodos en n2 {num_disc_nodes_2}')
+         if num_disc_nodes_1 == num_nodos and num_disc_nodes_2 == num_nodos:
+            modified_edges_list_KrustalI.remove(edge)
+         else:
+            edge.n1.add_nodos_adyacentes(edge.n2)
+            edge.n2.add_nodos_adyacentes(edge.n1)
+
+         #print(f'Krustal edges {modified_edges_list_KrustalI}')
+         #print(f'Orig Krustal edges {edges_list_KrustalI}')
+      return modified_edges_list_KrustalI
+
+   def Prim(self, grafo, nodo_incial): 
+      """
+      Para cálculo de árbol de expansión masiva, se escoge un nodo aleatorio 
+      """
+      #print(f'Grafo original {grafo.graph_dict}')
+      
+      dict_distancias = dict()
+      list_Q = [nodo_incial]
+      list_S = []
+
+      for nodo in self.nodes_list:
+         #print(f'edge add distance {nodo}')
+         dict_distancias[nodo] = 1000000
+         
+         if nodo != nodo_incial:
+            list_Q.append(nodo)
+         
+      #print(f'Lista Q {list_Q}')
+
+      nodo_u = nodo_incial
+      while len(list_Q) > 0:
+         nodo_u = list_Q[0]
+         list_Q.pop(0)
+         list_S.append(nodo_u)
+
+         for nodo_ad in nodo_u.nodos_adyacentes:
+            arista_adyacente =  Arista_undirected(nodo_u, nodo_ad)
+            index_list_edges = self.edges_list.index(arista_adyacente)
+            l_e = self.edges_list[index_list_edges].weight
+            arista_adyacente = self.edges_list[index_list_edges]
+
+            #print(f'Arista {nodo_u} - {nodo_ad} con peso {l_e}')
+
+            if ((nodo_ad not in list_S) and (l_e < dict_distancias[nodo_ad])):
+               
+               list_Q.pop(list_Q.index(nodo_ad))    # Remove from the list
+               new_place_Q = self.sort_priority_queue(list_Q, dict_distancias, l_e)
+               dict_distancias[nodo_ad] = l_e
+               list_Q.insert(new_place_Q, nodo_ad)  # Actualizar lista de prioridades Q
+
+               #print(f'Lista Q actualizada {list_Q}')
+               #Actualizar diccionario de árbol de Prim
+               self.prim_dict[nodo_ad] = [nodo_u]
+         
+         #list_Q.pop(list_Q.index(arista_eliminar))
+         #list_S.append(arista_eliminar)
+
+         #if arista_eliminar.n1 in list_S_nodos:
+         #   list_S_nodos.append(arista_eliminar.n2)
+         #else:
+         #  list_S_nodos.append(arista_eliminar.n1)
+
+         #if list_Q[0].n1 in list_S_nodos:
+         #   nodo_u = list_Q[0].n2
+         #else:
+         #   nodo_u = list_Q[0].n2
+         #print(f'Grafo Prim Resultante {self.prim_dict}')
+         self.dict_distance_node = dict_distancias
+   
+   def draw_graph_eades(self, M = 100, c1 = 100, c2 = 50, c3 = 50, c4 = 5):
+      nodos_drawed_dict = dict()
+      pygame.init()
+
+      win = pygame.display.set_mode((750,750))
+
+      pygame.display.set_caption("Graph disposition Eades")
+
+      run = True
+
+      while run:
+         pygame.time.delay(100)
+
+         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                  run = False
+
+         for nodo in self.nodes_list:
+            x = random.randint(3,747)
+            y = random.randint(3,747)
+            nodos_drawed_dict[nodo] = pygame.draw.circle(win, (255, 255, 255), (x, y), 3)
+            pygame.display.update()
+            print(nodos_drawed_dict[nodo].center)
+
+         #for edge in self.edges_list:
+            
+
+         for i in range(1, M):
+            for nodo_1 in self.nodes_list:
+               for nodo_2 in self.nodes_list:
+                  edge_created = Arista_undirected(nodo_1, nodo_2)
+                  if nodo_1 != nodo_2:
+                     x_n1 = nodos_drawed_dict[nodo_1].center[0]
+                     y_n1 = nodos_drawed_dict[nodo_1].center[1]
+                     x_n2 = nodos_drawed_dict[nodo_2].center[0]
+                     y_n2 = nodos_drawed_dict[nodo_2].center[1]
+                     d = math.sqrt((x_n1 - x_n2)**2 + (y_n1 - y_n2)**2)
+                     print(f'distance: {d}')
+                     if edge_created in self.edges_list:
+                        f_a = c1 * math.log(d/c2) 
+                     else:
+                        f_r = c3 / math.sqrt(d)
+
+                     
+
+
+
+         pygame.time.delay(1000)
+         run = False
+         #minor change
+
+      pygame.quit()
                       
