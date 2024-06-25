@@ -727,7 +727,7 @@ class Grafo:
             x = random.random()
             y = random.random()
             self.nodos_drawed_dict[nodo] = draw_node(x,y)
-            print(f'nodo {nodo} center {self.nodos_drawed_dict[nodo].center}')
+            #print(f'nodo {nodo} center {self.nodos_drawed_dict[nodo].center}')
             self.nodos_drawed_dict[nodo] = nodo_update(nodo)
             print(f'nodo {nodo} center {self.nodos_drawed_dict[nodo].center}')
             
@@ -756,10 +756,15 @@ class Grafo:
                         p1 = self.nodos_drawed_dict[nodo_1].center
                         p2 = self.nodos_drawed_dict[nodo_2].center
 
-                        print(f'center p1 {p1}, center p2 {p2}')
-
+                        #print(f'center p1 {p1}, center p2 {p2}')
                         dis_a, ang = distance_ang(p1, p2)
-                        Fxy = fuerza_atraccion(nodo_1, nodo_2, math.sqrt(dis_a))
+                        #print(f'distancia {dis_a}')
+
+                        if dis_a == 0:
+                           Fxy = fuerza_repulsion(nodo_1, nodo_2)
+                        else:
+                           
+                           Fxy = fuerza_atraccion(nodo_1, nodo_2, math.sqrt(dis_a))
                      
                   F_x += Fxy[0]
                   F_y += Fxy[1]
@@ -777,10 +782,19 @@ class Grafo:
             
             win.fill((0, 0, 0))
             
-            for i in self.nodes_list:                
-               self.nodos_drawed_dict[i][0] += self.vec_fuerzas[i][0] * delta
-               self.nodos_drawed_dict[i][1] += self.vec_fuerzas[i][0] * delta
+            for i in self.nodes_list:  
+               if self.nodos_drawed_dict[i][0] +  self.vec_fuerzas[i][0] * delta <= 750:
+                  self.nodos_drawed_dict[i][0] += self.vec_fuerzas[i][0] * delta
+               else:
+                  self.nodos_drawed_dict[i][0] = 750
+               
+               if self.nodos_drawed_dict[i][1] + self.vec_fuerzas[i][1] * delta <= 750:
+                  self.nodos_drawed_dict[i][1] += self.vec_fuerzas[i][1] * delta
+               else:
+                  self.nodos_drawed_dict[i][1] = 750
+               
                self.nodos_drawed_dict[i] = nodo_update(i)
+               #print(f'distancia nodos drawed {self.nodos_drawed_dict[i].center[0]}')
                #pygame.display.update()
 
             for i in self.nodes_list:
@@ -792,6 +806,8 @@ class Grafo:
             pygame.display.update()
 
             pygame.time.Clock().tick(2000)
+
+         pygame.time.delay(1000)
          run = False
 
          for event in pygame.event.get():

@@ -13,13 +13,13 @@ from libGraph import mesh_graph, erdos_renyi_graph, gilbert_graph, geografico_si
 #gilbert_graph(500, 0.9, False)
 
 #geografico_simple_graph(20, 0.3, False)
-#geografico_simple_graph(120, 0.3, False)
+#geografico_simple_graph(100, 0.3, False)
 #geografico_simple_graph(500, 0.15, False)
 
 #barabasi_albert_graph(20,2, False)
 #barabasi_albert_graph(120,2, False)
 #barabasi_albert_graph(500,2, False)
 
-dorogovtsev_mendes_graph(10, False)
-#dorogovtsev_mendes_graph(120, False)
+#dorogovtsev_mendes_graph(20, False)
+dorogovtsev_mendes_graph(120, False)
 #dorogovtsev_mendes_graph(500, False)
