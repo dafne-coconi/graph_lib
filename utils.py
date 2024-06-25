@@ -1,6 +1,8 @@
 from datetime import datetime
 import random
 import math
+import copy
+import pygame
 
 class Nodo:
    """
@@ -55,6 +57,9 @@ class Nodo:
    
    def add_nodos_adyacentes(self, nodo):
       self.nodos_adyacentes.append(nodo)
+
+   def remove_nodo_adyacente(self, nodo_ad):
+      self.nodos_adyacentes.remove(nodo_ad)
    
    def explored(self):
       self.nodo_explored = 1
@@ -80,6 +85,7 @@ class Arista_undirected:
    Clase Arista
    :param value: number of nodes
    """
+   
    def __init__(self, n1: Nodo, n2: Nodo, weight = random.randint(2,50)):
       self.n1 = n1
       self.n2 = n2
@@ -104,8 +110,14 @@ class Arista_undirected:
       self.is_explored = 1
    
    def __repr__(self):
-        #return f'[{self.n1}, {self.n2}, {self.weight}]'
         return f'[{self.n1}, {self.n2}]'
+        #return f'({self.n1}, {self.n2})
+        # 
+   def __key(self):
+      return (self.n1.name, self.n2.name)
+
+   def __hash__(self):
+      return hash(self.__key())
         
    
    #def __str__(self):
@@ -154,6 +166,7 @@ class Grafo:
       self.dfs_i_dict = dict()
       self.dfs_r_dict = dict()
       self.dijkstra_dict = dict()
+      self.prim_dict = dict()
       self.dict_distance_node = {}
       #for node in self.nodes_list:
        #  self.dfs_r_dict[node] = []
@@ -253,6 +266,9 @@ class Grafo:
       elif type_graph == "DIJKSTRA":
          graph = self.dijkstra_dict
          filename = f"{self.name}_DIJKSTRA_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "PRIM":
+         graph = self.prim_dict
+         filename = f"{self.name}_PRIM_{len(self.nodes_list)}_{current_datetime}.dot"
       else:
          graph = self.graph_dict
          #print(f'grafo regular {self.graph_dict}')
@@ -269,6 +285,7 @@ class Grafo:
          line = str
          for key in graph:
             value = graph[key]
+            #print(value)
             if (len(value) > 0):
         
                for single_value in value:
@@ -276,7 +293,7 @@ class Grafo:
                      continue
                   #print(single_value)
                   #line = f'{key} ->' + '{' + f'{value_as_string}' + '}\n'
-                  if type_graph == "DIJKSTRA":
+                  if type_graph == "DIJKSTRA" or type_graph == "PRIM":
                      line = f'{single_value}_{self.dict_distance_node[single_value]} -> ' + f'{key}_{self.dict_distance_node[key]}' + ';\n'
                      file.write(line)
                   else:
@@ -284,7 +301,7 @@ class Grafo:
                      file.write(line)
 
             else:
-               if type_graph == "DIJKSTRA":
+               if type_graph == "DIJKSTRA" or type_graph == "PRIM":
                   line = f'{key}_0'+ '\n'
                else:
                   line = f'{key}'+ '\n'
@@ -296,26 +313,21 @@ class Grafo:
       #print(self.edges_list)
       print(f"Graph saved to {filepath} ")
 
-   def save_graph_edges(self, type_graph: str ):
+   def save_graph_edges(self, type_graph: str,  new_edges_list):
       current_datetime = datetime.now().strftime("%Y%m%d%H%M%S")
       if type_graph == "BFS":
-         graph = self.bfs_dict
-         #print(f'Imprimir {graph}')
          filename = f"{self.name}_BFS_{len(self.nodes_list)}_{current_datetime}.dot"
       elif type_graph == "DFS_R":
-         graph = self.dfs_r_dict
-         #print(f'Imprimir {graph}')
          filename = f"{self.name}_DFS_R_{len(self.nodes_list)}_{current_datetime}.dot"
       elif type_graph == "DFS_I":
-         graph = self.dfs_i_dict
-         #print(f'Imprimir {graph}')
          filename = f"{self.name}_DFS_I_{len(self.nodes_list)}_{current_datetime}.dot"
       elif type_graph == "DIJKSTRA":
-         graph = self.dijkstra_dict
          filename = f"{self.name}_DIJKSTRA_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "KrustalD":
+         filename = f"{self.name}_KrustalD_{len(self.nodes_list)}_{current_datetime}.dot"
+      elif type_graph == "KrustalI":
+         filename = f"{self.name}_KrustalI_{len(self.nodes_list)}_{current_datetime}.dot"
       else:
-         graph = self.graph_dict
-         #print(f'grafo regular {self.graph_dict}')
          filename = f"{self.name}_edges_{len(self.nodes_list)}_{current_datetime}.dot"
    
       
@@ -327,7 +339,7 @@ class Grafo:
          file.write(f"graph {self.name}" + "{\n")
          count = 0
          line = str
-         for edge in self.edges_list:
+         for edge in new_edges_list:
             
             line = f'{edge.n1} -> ' + f'{edge.n2}[Label={edge.weight}]' + ';\n'
             file.write(line)
@@ -340,28 +352,6 @@ class Grafo:
    def not_explored_nodes(self):
       for node in self.nodes_list:
          node.not_explored()
-
-   def sort_edges(self, vector_list: list)->list:
-      if len(vector_list) <= 1:
-         return vector_list
-      else:
-         weight_edge = vector_list[0].weight
-         left = []
-         right = []
-         for x in vector_list[1:]:
-            if x.weight < weight_edge:
-               left.append(x)
-         
-         for x in vector_list[1:]:
-            if x.weight >= weight_edge:
-               right.append(x)
-
-         return self.sort_edges(left) + [vector_list[0]] + self.sort_edges(right)
-      
-   def get_root(self, root, nodo):
-      if root[nodo] != nodo:
-         root[nodo] = self.get_root(root, root[nodo])
-      return root[nodo]
 
    def BFS(self, nodo_inicial: Nodo):
       discovered_nodes = list()
@@ -394,11 +384,13 @@ class Grafo:
                   list_nodos_adyacentes.append(nodo_adyacente)
                   list_nodo_dict.append(nodo_adyacente)
                   nodo_adyacente.explored()
-               discovered_nodes.append(nodo_adyacente)
+                  discovered_nodes.append(nodo_adyacente)
                #print(f' Discovered {discovered_nodes}')
             #print(f'for nodo {nodo} add {list_nodo_dict}')
             self.bfs_dict[nodo] = list_nodo_dict
          self.capas[num_capa] = list_nodos_adyacentes
+      
+      return len(discovered_nodes)
 
    def DFS_I(self, s: Nodo):
       nodo_1 = s
@@ -458,13 +450,14 @@ class Grafo:
             nodo.explored()
             #print(f'arista is explored {arista.is_explored}')
             self.DFS_R(nodo)
+      
    
    def Dijkstra(self, nodo_inicial: Nodo):
       """
       Algoritmo de camino mínimo
       """
       if len(nodo_inicial.nodos_adyacentes) < 1:
-         print(f'No tiene nodos adyacentes, intenta con otro')
+         #print(f'No tiene nodos adyacentes, intenta con otro')
          return
       
       # Set initial lists
@@ -545,82 +538,7 @@ class Grafo:
                   #print(f'{nodo_u} a nodo ad {nodo_adyacente}')
       #print(f'distancia de nodos {self.dict_distance_node}')
       #print(f'Grafo formado: {self.dijkstra_dict}')
-   
-   def KruskalD(self, grafo):
-      """
-      Algoritmo de expansión mínima
-      """
-      print(self.edges_list)
-      self.edges_list = self.sort_edges(self.edges_list)
-      T_exp_min = []
-      root = []
-      rank = []
-      total_cost = 0
-      for node in self.nodes_list:
-         root.append(node)
-         rank.append(0)
-
-      for edge in self.edges_list:
-         u = edge.n1
-         v = edge.n2
-         weight_edge = edge.weight
-
-         root_n1 = self.get_root(root, u)
-         root_n2 = self.get_root(root, v)
-
-         if root_n1 != root_n2:
-            T_exp_min.append(edge)
-            if rank[u] < rank[v]:
-               root[u] = v
-            elif rank[u] > rank[v]:
-               root[v] = u
-
-            else: 
-               root[v] = v
-               rank[u] += 1
-            total_cost += weight_edge
-
-
-      """
-      dict_conj = dict()
-      conjunto_n1 = 0
-      conjunto_n2 = 1
-      iteration = 0
-      for edge in self.edges_list:
-         iteration += 1
-         if iteration == 1:
-            dict_conj[conjunto_n1] = 
-         # checar en qué conjunto están
-         it = 0
-         for conj in dict_conj:            
-            if edge.n1 in dict_conj[conj]:
-               dict_conj[conj].append(edge.n1)
-               conjunto_n1 = conj
-               break
-            elif len(dict_conj) - 1 <= it:
-               dict_conj[conj + 1] = [edge.n1]
-               conjunto_n1 = conj+1
-            it += 1
-
-         it = 0   
-         for conj in dict_conj:
-            conjunto_n2 = conj
-            if edge.n2 in dict_conj[conj]:
-               dict_conj[conj].append(edge.n2)
-               conjunto_n2 = conj
-               break
-            elif len(dict_conj) - 1 <= it:
-               dict_conj[conj + 1] = [edge.n2]
-               conjunto_n2 = conj + 1
-            it += 1
-            
-         if conjunto_n1 != conjunto_n2:
-            dict_conj[conjunto_n1].append(edge.n2)
-            dict_conj[conjunto_n2].pop(edge.n2)
-            T_exp_min.append(edge)
-         print(f'T {T_exp_min}')
-      """
-      # Ordenar las aristas ascendentemente por su costo
+      
                         
                            
                       
