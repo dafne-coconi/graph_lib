@@ -49,7 +49,7 @@ def mesh_graph(m, n, dirigido = False):
    grafo.create_graph_notation()
    
    grafo.not_explored_nodes()
-   grafo.save_graph_edges(type_graph = grafo.name)
+   grafo.save_graph_edges(type_graph = grafo.name, new_edges_list = grafo.edges_list)
    
    nodo = grafo.nodes_list[5]
    """
@@ -65,11 +65,21 @@ def mesh_graph(m, n, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
-   """
+
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
+   """
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
 
 def erdos_renyi_graph(n, m, dirigido = False):
    """
@@ -99,7 +109,7 @@ def erdos_renyi_graph(n, m, dirigido = False):
    grafo.create_graph_notation()
    
    grafo.not_explored_nodes()
-   grafo.save_graph_edges(type_graph = grafo.name)
+   grafo.save_graph_edges(type_graph = grafo.name, new_edges_list = grafo.edges_list)
    """
    nodo = grafo.nodes_list[5]
    
@@ -114,11 +124,21 @@ def erdos_renyi_graph(n, m, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
-   """
+   
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
+   """
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
 
 
 def gilbert_graph(n, p, dirigido=False):
@@ -144,7 +164,7 @@ def gilbert_graph(n, p, dirigido=False):
    grafo.create_graph_notation()
    
    grafo.not_explored_nodes()
-   grafo.save_graph_edges(type_graph = grafo.name)
+   grafo.save_graph_edges(type_graph = grafo.name, new_edges_list = grafo.edges_list)
    
    """
    nodo = grafo.nodes_list[5]
@@ -160,13 +180,23 @@ def gilbert_graph(n, p, dirigido=False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
-   """
+   
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
 
    #grafo.save_graph_edges(type_graph = grafo.name)
+   """
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
 
 
 def geografico_simple_graph(n, r, dirigido = False):
@@ -209,7 +239,7 @@ def geografico_simple_graph(n, r, dirigido = False):
    #grafo.simplify_list_node()
    grafo.create_graph_notation()
    grafo.not_explored_nodes()
-   grafo.save_graph_edges(type_graph = grafo.name)
+   grafo.save_graph_edges(type_graph = grafo.name, new_edges_list = grafo.edges_list)
    """
    nodo = grafo.nodes_list[0]
 
@@ -224,11 +254,22 @@ def geografico_simple_graph(n, r, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
- """
+ 
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
+   """
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
+
 
 def barabasi_albert_graph(n, degree, dirigido = False):
    """
@@ -257,7 +298,7 @@ def barabasi_albert_graph(n, degree, dirigido = False):
 
    grafo.create_graph_notation()
    grafo.not_explored_nodes()
-   grafo.save_graph_edges(type_graph = grafo.name)
+   grafo.save_graph(type_graph = grafo.name)
    """
    nodo = grafo.nodes_list[0]
    
@@ -272,11 +313,21 @@ def barabasi_albert_graph(n, degree, dirigido = False):
    grafo.not_explored_nodes()
    grafo.DFS_R(nodo)
    grafo.save_graph(type_graph = "DFS_R")
-   """
+   
    random_node = random.choice(grafo.nodes_list)
    print(f' random_node: {random_node}')
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
+   """
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
 
 def dorogovtsev_mendes_graph(n, dirigido = False):
    """
@@ -308,7 +359,7 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    
    grafo.create_graph_notation()
    grafo.not_explored_nodes()
-   grafo.save_graph_edges(type_graph = grafo.name)
+   grafo.save_graph_edges(type_graph = grafo.name, new_edges_list = grafo.edges_list)
    
    nodo = grafo.nodes_list[0]
    """
@@ -329,5 +380,14 @@ def dorogovtsev_mendes_graph(n, dirigido = False):
    grafo.Dijkstra(random_node)
    grafo.save_graph(type_graph = "DIJKSTRA")
    """
-   #grafo.KruskalD(grafo)
-   grafo.KruskalI(grafo)
+   new_edges_list = grafo.KruskalD(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalD", new_edges_list = new_edges_list)
+   new_edges_list = grafo.KruskalI(grafo)
+   grafo.save_graph_edges(type_graph = "KrustalI", new_edges_list = new_edges_list)
+   
+   random_node = random.choice(grafo.nodes_list)
+   print(f' random_node: {random_node}')
+   grafo.Prim(grafo, random_node)
+   grafo.save_graph(type_graph = "PRIM")
+
+   #grafo.draw_graph_eades()
