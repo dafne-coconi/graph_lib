@@ -1,0 +1,32 @@
+graph mesh{
+N2 -> N12[Label=33];
+N28 -> N29[Label=26];
+N16 -> N26[Label=25];
+N8 -> N18[Label=24];
+N6 -> N7[Label=21];
+N14 -> N24[Label=20];
+N9 -> N10[Label=19];
+N7 -> N8[Label=18];
+N21 -> N22[Label=16];
+N11 -> N21[Label=16];
+N17 -> N27[Label=15];
+N5 -> N15[Label=14];
+N14 -> N15[Label=13];
+N22 -> N23[Label=12];
+N7 -> N17[Label=11];
+N19 -> N20[Label=10];
+N11 -> N12[Label=10];
+N3 -> N13[Label=8];
+N29 -> N30[Label=7];
+N2 -> N3[Label=7];
+N18 -> N19[Label=6];
+N1 -> N11[Label=6];
+N20 -> N30[Label=5];
+N15 -> N16[Label=5];
+N25 -> N26[Label=4];
+N6 -> N16[Label=4];
+N9 -> N19[Label=3];
+N3 -> N4[Label=3];
+N13 -> N14[Label=2];
+
+}
