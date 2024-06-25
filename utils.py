@@ -3,6 +3,7 @@ import random
 import math
 import copy
 import pygame
+import numpy
 
 class Nodo:
    """
@@ -736,7 +737,7 @@ class Grafo:
          
          self.dict_distance_node = dict_distancias
    
-   def draw_graph_eades(self, M = 100, c1 = 100, c2 = 50, c3 = 50, c4 = 5):
+   def draw_graph_eades(self, M = 2, c1 = 2, c2 = 1, c3 = 1, c4 = 0.1):
       def draw_node(pos_x, pos_y):
          nodo_pos = (pos_x*750, pos_y*750)
          return pygame.draw.circle(win, (255, 255, 255), nodo_pos, 3)
@@ -744,7 +745,7 @@ class Grafo:
       def nodo_update(nodo):
          x = int((nodos_drawed_dict[nodo].center[0] * 750) / 750)
          y = int((nodos_drawed_dict[nodo].center[1] * 750) / 750)
-         draw_node(x,y)
+         return draw_node(x,y)
 
       def draw_edge(nodo1, nodo2):
          pos_n1 = nodos_drawed_dict[nodo1].center
@@ -802,8 +803,9 @@ class Grafo:
 
          for edge in self.edges_list:
             draw_edge(edge.n1, edge.n2)
-            
-
+         
+         pygame.display.update()
+         pygame.time.delay(1000)
          for i in range(1, M):
             for nodo_1 in self.nodes_list:
                for nodo_2 in self.nodes_list:
@@ -813,13 +815,16 @@ class Grafo:
                      pos2 = nodos_drawed_dict[nodo_2].center
                      distance, ang = distance_ang(pos1, pos2)
                      if edge_created in self.edges_list:
-                        fuerza = c1 * math.log(distance/c2) 
+                        fuerza = c1 * numpy.log(distance/c2) 
+                     elif distance == 0:
+                        fuerza = 0
                      else:
                         fuerza = c3 / math.sqrt(distance)
-                     
+                     print(f'fuerza {fuerza}')
                      #sumamos fuerzas
                      fue_f1, ang_f1 = suma_vectores(fuerza, ang, vec_fuerzas[nodo_1])
                      vec_fuerzas[nodo_1] = (fue_f1, ang_f1)
+                     print(f'Fuerza y angulo ({fue_f1}, {ang_f1})')
 
                      fue_f2, ang_f2 = suma_vectores(fuerza, ang, vec_fuerzas[nodo_2])
                      vec_fuerzas[nodo_2] = (fue_f2, ang_f2)
@@ -833,9 +838,11 @@ class Grafo:
                      nodos_drawed_dict[nodo_1] = draw_node(pos1[0]+co_x_1, pos1[1]+co_y_1)
                      nodos_drawed_dict[nodo_2] = draw_node(pos2[0]+co_x_2, pos2[1]+co_y_2)
 
+                     print(f'x {nodos_drawed_dict[nodo_1].center[0]}, y {nodos_drawed_dict[nodo_1].center[1]}')
+
                      pygame.display.update()
 
-         #pygame.time.delay(1000)
+         pygame.time.delay(1000)
          run = False
          #minor change
 
