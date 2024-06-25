@@ -1,0 +1,12 @@
+graph erdos_renyi{
+N6 -> N7[Label=43];
+N3 -> N2[Label=36];
+N6 -> N3[Label=31];
+N3 -> N5[Label=26];
+N1 -> N8[Label=26];
+N5 -> N6[Label=23];
+N2 -> N4[Label=14];
+N7 -> N2[Label=12];
+N2 -> N5[Label=2];
+
+}

@@ -1,0 +1,22 @@
+graph barabasi_albert{
+N14 -> N1[Label=38];
+N11 -> N1[Label=34];
+N18 -> N3[Label=26];
+N17 -> N2[Label=23];
+N9 -> N3[Label=23];
+N12 -> N3[Label=18];
+N19 -> N5[Label=17];
+N20 -> N2[Label=15];
+N10 -> N3[Label=15];
+N20 -> N1[Label=14];
+N6 -> N2[Label=14];
+N5 -> N7[Label=14];
+N13 -> N1[Label=12];
+N8 -> N1[Label=12];
+N2 -> N3[Label=9];
+N1 -> N5[Label=7];
+N16 -> N2[Label=5];
+N4 -> N1[Label=4];
+N15 -> N2[Label=2];
+
+}
