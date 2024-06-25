@@ -798,6 +798,7 @@ class Grafo:
 
          pygame.time.delay(1000)
          run = False
+         #minor change
 
       pygame.quit()
                       
