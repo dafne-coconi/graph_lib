@@ -1,0 +1,43 @@
+graph gilbert{
+N1 -> N8[Label=35];
+N1 -> N9[Label=36];
+N1 -> N10[Label=4];
+N1 -> N16[Label=37];
+N3 -> N7[Label=9];
+N3 -> N11[Label=10];
+N3 -> N13[Label=25];
+N3 -> N15[Label=37];
+N4 -> N7[Label=14];
+N6 -> N19[Label=2];
+N7 -> N11[Label=46];
+N8 -> N2[Label=14];
+N9 -> N6[Label=24];
+N9 -> N8[Label=46];
+N9 -> N15[Label=43];
+N10 -> N9[Label=44];
+N10 -> N14[Label=9];
+N10 -> N15[Label=7];
+N10 -> N17[Label=45];
+N10 -> N18[Label=11];
+N11 -> N2[Label=6];
+N12 -> N13[Label=2];
+N12 -> N19[Label=26];
+N13 -> N11[Label=38];
+N14 -> N1[Label=44];
+N14 -> N15[Label=15];
+N14 -> N19[Label=48];
+N15 -> N11[Label=26];
+N16 -> N4[Label=9];
+N16 -> N8[Label=47];
+N16 -> N15[Label=39];
+N16 -> N19[Label=33];
+N17 -> N5[Label=32];
+N17 -> N19[Label=49];
+N18 -> N7[Label=33];
+N18 -> N14[Label=5];
+N18 -> N20[Label=47];
+N19 -> N7[Label=40];
+N19 -> N10[Label=36];
+N20 -> N4[Label=16];
+
+}

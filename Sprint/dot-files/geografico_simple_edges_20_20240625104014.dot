@@ -1,0 +1,46 @@
+graph geografico_simple{
+N2 -> N6[Label=35];
+N2 -> N13[Label=2];
+N2 -> N14[Label=29];
+N2 -> N15[Label=50];
+N2 -> N18[Label=3];
+N2 -> N20[Label=8];
+N3 -> N5[Label=3];
+N3 -> N8[Label=29];
+N3 -> N11[Label=35];
+N4 -> N5[Label=9];
+N4 -> N10[Label=14];
+N4 -> N11[Label=30];
+N4 -> N17[Label=2];
+N5 -> N8[Label=10];
+N5 -> N10[Label=16];
+N5 -> N11[Label=11];
+N6 -> N13[Label=45];
+N6 -> N14[Label=34];
+N6 -> N15[Label=2];
+N6 -> N17[Label=41];
+N6 -> N18[Label=30];
+N6 -> N20[Label=2];
+N7 -> N9[Label=41];
+N7 -> N12[Label=17];
+N7 -> N19[Label=37];
+N8 -> N11[Label=29];
+N9 -> N16[Label=9];
+N9 -> N19[Label=9];
+N10 -> N11[Label=10];
+N10 -> N17[Label=47];
+N12 -> N13[Label=13];
+N12 -> N16[Label=9];
+N13 -> N15[Label=43];
+N13 -> N18[Label=3];
+N13 -> N20[Label=44];
+N14 -> N15[Label=40];
+N14 -> N18[Label=3];
+N14 -> N20[Label=8];
+N15 -> N18[Label=6];
+N15 -> N20[Label=30];
+N17 -> N18[Label=16];
+N17 -> N20[Label=25];
+N18 -> N20[Label=23];
+
+}

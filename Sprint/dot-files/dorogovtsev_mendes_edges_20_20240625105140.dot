@@ -1,0 +1,40 @@
+graph dorogovtsev_mendes{
+N3 -> N1[Label=47];
+N1 -> N2[Label=48];
+N2 -> N3[Label=30];
+N3 -> N4[Label=48];
+N1 -> N4[Label=28];
+N1 -> N5[Label=34];
+N2 -> N5[Label=31];
+N1 -> N6[Label=5];
+N4 -> N6[Label=29];
+N3 -> N7[Label=44];
+N1 -> N7[Label=16];
+N3 -> N8[Label=42];
+N4 -> N8[Label=47];
+N2 -> N9[Label=45];
+N5 -> N9[Label=23];
+N4 -> N10[Label=46];
+N6 -> N10[Label=36];
+N2 -> N11[Label=27];
+N3 -> N11[Label=4];
+N3 -> N12[Label=27];
+N1 -> N12[Label=10];
+N1 -> N13[Label=45];
+N12 -> N13[Label=47];
+N1 -> N14[Label=13];
+N12 -> N14[Label=17];
+N2 -> N15[Label=34];
+N5 -> N15[Label=23];
+N3 -> N16[Label=43];
+N4 -> N16[Label=25];
+N3 -> N17[Label=20];
+N11 -> N17[Label=36];
+N4 -> N18[Label=45];
+N8 -> N18[Label=15];
+N1 -> N19[Label=34];
+N7 -> N19[Label=12];
+N6 -> N20[Label=3];
+N10 -> N20[Label=45];
+
+}
